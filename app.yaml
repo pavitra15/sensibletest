@@ -1,0 +1,412 @@
+runtime: php55
+
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /(.+\.(gif|png|jpg))$
+  static_files: \1
+  upload: .+\.(gif|png|jpg)$
+  application_readable: true
+
+- url: /(.*\.(htm$|jshtml$|html$|css$|js$))
+  static_files: \1
+
+  upload: (.*\.(htm$|jshtml$|html$|css$|js$))
+  application_readable: true
+
+- url: /(.+\.php)$
+  script: /\1
+
+- url: /(.*)\.jshtml$
+  script: \1
+
+- url: /
+  script: login/signin.php
+  secure: always
+
+- url: /login/signin
+  script: /login/signin.php
+  secure: always
+
+- url: /login/choose_device
+  script: /login/choose_device.php
+  secure: always
+
+- url: /login/choose
+  script: /login/choose.php
+  secure: always  
+
+- url: /dashboard/index
+  script: /dashboard/index.php
+  secure: always
+
+- url: /dashboard/category
+  script: /dashboard/category.php
+  secure: always
+
+- url: /dashboard/customer
+  script: /dashboard/customer.php
+  secure: always
+
+- url: /dashboard/waiter
+  script: /dashboard/waiter.php
+  secure: always
+
+- url: /dashboard/kitchen
+  script: /dashboard/kitchen.php
+  secure: always
+
+- url: /dashboard/premise
+  script: /dashboard/premise.php
+  secure: always
+
+- url: /dashboard/price
+  script: /dashboard/price.php
+  secure: always
+
+- url: /dashboard/product
+  script: /dashboard/product.php
+  secure: always
+
+- url: /dashboard/register_device
+  script: /dashboard/register_device.php
+  secure: always
+
+- url: /dashboard/stock
+  script: /dashboard/stock.php
+  secure: always
+
+- url: /dashboard/tax
+  script: /dashboard/tax.php
+  secure: always
+
+- url: /dashboard/user
+  script: /dashboard/user.php
+  secure: always
+
+- url: /copy_data/copy_product
+  script: /copy_data/copy_product.php
+  secure: always
+
+- url: /report/bill_report
+  script: /report/bill_report.php
+  secure: always
+
+- url: /report/kot_report
+  script: /report/kot_report.php
+  secure: always
+
+- url: /report/user_report
+  script: /report/user_report.php
+  secure: always
+
+- url: /report/product_report
+  script: /report/product_report.php
+  secure: always
+
+- url: /report/stock_report
+  script: /report/stock_report.php
+  secure: always
+
+- url: /report/credit_report
+  script: /report/credit_report.php
+  secure: always
+
+- url: /report/customer_report
+  script: /report/customer_report.php
+  secure: always
+
+- url: /report/waiter_report
+  script: /report/waiter_report.php
+  secure: always
+
+- url: /report/out_of_stock_report
+  script: /report/out_of_stock_report.php
+  secure: always
+
+- url: /report/reorder_stock__report
+  script: /report/reorder_stock__report.php
+  secure: always
+
+- url: /operation/device_info
+  script: /operation/device_info.php
+  secure: always
+
+- url: /operation/print_setup
+  script: /operation/print_setup.php
+  secure: always
+
+- url: /operation/device_reset
+  script: /operation/device_reset.php
+  secure: always
+
+- url: /operation/device_transfer
+  script: /operation/device_transfer.php
+  secure: always
+
+- url: /operation/reset
+  script: /operation/reset.php
+  secure: always
+
+- url: /operation/reset_otp
+  script: /operation/reset_otp.php
+  secure: always
+
+- url: /operation/transfer
+  script: /operation/transfer.php
+  secure: always
+
+- url: /operation/configure
+  script: /operation/configure.php
+  secure: always
+
+- url: /account/sign-up
+  script: /account/sign-up.php
+  secure: always
+
+- url: /account/activate
+  script: /account/activate.php
+  secure: always
+
+- url: /account/change_password
+  script: /account/change_password.php
+  secure: always
+
+- url: /account/profile
+  script: /account/profile.php
+  secure: always
+
+- url: /account/forgot-password
+  script: /account/forgot-password.php
+  secure: always
+
+- url: /account/verify
+  script: /account/verify.php
+  secure: always
+
+- url: /account/verify_otp
+  script: /account/verify_otp.php
+  secure: always
+
+- url: /account/change_login
+  script: /account/change_login.php
+  secure: always
+
+- url: /account/username_verify
+  script: /account/username_verify.php
+  secure: always
+
+- url: /account/reset_password
+  script: /account/reset_password.php
+  secure: always
+
+- url: /admin/dashboard
+  script: /admin/dashboard.php
+  secure: always
+
+- url: /admin/approve
+  script: /admin/approve.php
+  secure: always
+
+- url: /admin/category_master
+  script: /admin/category_master.php
+  secure: always
+
+- url: /admin/login
+  script: /admin/login.php
+  secure: always
+
+- url: /admin/logout
+  script: /admin/logout.php
+  secure: always
+
+- url: /admin/product_master
+  script: /admin/product_master.php
+  secure: always
+
+- url: /admin/tax_master
+  script: /admin/tax_master.php
+  secure: always
+
+- url: /admin/back_act_mobile
+  script: /admin/back_act_mobile.php
+  secure: always
+
+- url: /admin/unit_master
+  script: /admin/unit_master.php
+  secure: always
+
+- url: /admin/upload
+  script: /admin/upload.php
+  secure: always
+
+- url: /admin/product_master
+  script: /admin/product_master.php
+  secure: always
+
+- url: /admin/last
+  script: /admin/last.php
+  secure: always
+
+- url: /admin/access
+  script: /admin/access.php
+  secure: always
+
+- url: /admin/device_version
+  script: /admin/device_version.php
+  secure: always
+
+
+- url: /admin/user_device
+  script: /admin/user_device.php 
+  secure: always
+
+- url: /admin/user_type_master
+  script: /admin/user_type_master.php
+  secure: always
+
+- url: /admin/make_demo
+  script: /admin/make_demo.php
+  secure: always
+
+- url: /admin/state_master
+  script: /admin/state_master.php
+  secure: always
+
+- url: /admin/language_master
+  script: /admin/language_master.php
+  secure: always
+
+- url: /admin/oem_dealer
+  script: /admin/oem_dealer.php
+  secure: always
+
+- url: /change_request/change_request
+  script: /change_request/change_request.php
+  secure: always
+
+- url: /super_admin/token
+  script: /super_admin/token.php  
+  secure: always
+
+- url: /super_admin/allow_access
+  script: /super_admin/allow_access.php
+  secure: always
+
+- url: /super_admin/deny_access
+  script: /super_admin/deny_access.php
+  secure: always
+
+- url: /super_admin/user_device
+  script: /super_admin/user_device.php
+  secure: always
+
+- url: /super_admin/upload
+  script: /super_admin/upload.php
+  secure: always
+
+- url: /super_admin/user_type_master
+  script: /super_admin/user_type_master.php 
+  secure: always
+
+- url: /super_admin/make_demo
+  script: /super_admin/make_demo.php
+  secure: always
+
+- url: /super_admin/state_master
+  script: /super_admin/state_master.php
+  secure: always
+
+- url: /super_admin/language_master
+  script: /super_admin/language_master.php
+  secure: always
+
+- url: /super_admin/logout
+  script: /super_admin/logout.php
+  secure: always
+
+- url: /validation/validate_products
+  script: /validation/validate_products.php   
+  secure: always
+
+- url: /dealer/login
+  script: /dealer/login.php
+  secure: always
+
+- url: /dealer/logout
+  script: /dealer/logout.php       
+  secure: always
+
+- url: /demo/demo_machine
+  script: /demo/demo_machine.php 
+  secure: always
+
+- url: /dealer/dashboard
+  script: /dealer/dashboard.php
+  secure: always
+
+- url: /cumulative/index
+  script: /cumulative/index.php
+  secure: always
+
+- url: /cumulative/register
+  script: /cumulative/register.php
+  secure: always
+
+- url: /cumulative/configuration
+  script: /cumulative/configuration.php
+  secure: always
+
+- url: /cumulative/customer
+  script: /cumulative/customer.php
+  secure: always
+
+- url: /cumulative/category
+  script: /cumulative/category.php
+  secure: always
+
+- url: /cumulative/user
+  script: /cumulative/user.php
+  secure: always
+
+- url: /cumulative/tax
+  script: /cumulative/tax.php
+  secure: always
+
+- url: /cumulative/premise
+  script: /cumulative/premise.php
+  secure: always
+
+- url: /cumulative/kitchen
+  script: /cumulative/kitchen.php
+  secure: always
+
+- url: /cumulative/product
+  script: /cumulative/product.php
+  secure: always
+
+- url: /cumulative/stock
+  script: /cumulative/stock.php
+  secure: always
+
+- url: /cumulative/price
+  script: /cumulative/price.php
+  secure: always
+
+- url: /cumulative/waiter
+  script: /cumulative/waiter.php
+  secure: always
+
+- url: /cumulative/validate
+  script: /cumulative/validate.php
+  secure: always
+  
+env_variables:
+  MYSQL_DSN: mysql:unix_socket=/cloudsql/nth-weft-193604:asia-east1:sensiblepos;dbname=posibill
+  MYSQL_USER: root
+  MYSQL_PASSWORD: 'Sachin@18'

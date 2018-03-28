@@ -1,0 +1,11 @@
+cron:
+- description: daily summary report
+  url: /mail_report/daily_mail_report.php?page=1
+  target: beta
+  schedule: every day 22:50
+  timezone: Asia/Kolkata
+- description: daily summary report
+  url: /mail_report/daily_mail_report.php?page=2
+  target: beta
+  schedule: every day 23:05
+  timezone: Asia/Kolkata
