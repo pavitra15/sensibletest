@@ -7,7 +7,7 @@
     $status='active';
 	if($count==1)
     {
-        $select_query=$db->prepare("select * from login_mst where username='$username' and password=md5('$password') and status='$status' and access_control='$status'");
+        $select_query=$db->prepare("select * from login_mst where username='$username' and status='$status' and access_control='$status'");
         $select_query->execute();
         $count=$select_query->rowCount();
         if ($count==1)

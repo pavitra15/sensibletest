@@ -9,7 +9,8 @@
         $date = new DateTime("now", new DateTimeZone('Asia/Kolkata') );
         $clone= clone $date;
         $current_date=$clone->format( 'Y-m-d' ); 
-        $update_query=$db->prepare("update login_mst set password=md5('$password'),password_updated_date='$current_date' where id='$id'");
+        echo "update login_mst set password=AES_ENCRYPT('$password','manup'),password_updated_date='$current_date' where id='$id'";
+        $update_query=$db->prepare("update login_mst set password=AES_ENCRYPT('$password','manup'),password_updated_date='$current_date' where id='$id'");
         $update_query->execute();
         $count=$update_query->rowCount();
         if($count==1)

@@ -6,7 +6,7 @@
         $username=$_POST['email'];
         $first_name=ucwords($_POST['first_name']);
         $last_name=ucwords($_POST['last_name']);
-        $password=$_POST['password'];
+        $pass=$_POST['password'];
         $terms=$_POST['terms'];
         $date = new DateTime("now", new DateTimeZone('Asia/Kolkata') );
         $clone= clone $date;
@@ -14,6 +14,11 @@
         $user="user";
         $status="inactive";
         $gid="";
+        $key = pack('H*', "bcb04b7e103a0cd8b54763051cef08bc55abe029fdebae5e1d417e2ffb2a00a3");
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $password=mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,$pass, MCRYPT_MODE_CBC, $iv);
+
         $select_query=$db->prepare("select * from login_mst where username='$username'");
         $select_query->execute();
         $count=$select_query->rowCount();
@@ -34,14 +39,14 @@
                         
                         // $insert_query=$db->prepare("insert into temp_login (username,password,password_updated_date,status,type,created_by_date) values('$username',md5('$password'),'$current_date','$status','$user','$current_date')");
 
-                        $insert_query=$db->prepare("insert into login_mst (username,password,password_updated_date,status,type,created_by_date) values('$username',md5('$password'),'$current_date','$status','$user','$current_date')");
+                        $insert_query=$db->prepare("insert into login_mst (username,password,password_updated_date,status,type,created_by_date) values('$username','$password','$current_date','$status','$user','$current_date')");
 
                         $insert_query->execute();
                         $count=$insert_query->rowCount();
                         if($count==1)
                         {
                             $_SESSION['mobile']=$username;
-                            $query=$db->prepare("select id from login_mst where username='$username' and password=md5('$password')");
+                            $query=$db->prepare("select id from login_mst where username='$username' and password='$password'");
                             $query->execute();
                             while ($login_data=$query->fetch()) 
                             {

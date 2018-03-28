@@ -1,13 +1,14 @@
 <?php
-	include('../connect.php');
-	$username=$_POST['username'];
+    include('../connect.php');
+    $username=$_POST['username'];
+    $deviceid=$_POST['deviceid'];
     $query=$db->prepare("select id from login_mst where username='$username'");
     $query->execute();
     $count=$query->rowCount();
     $status='active';
-	if($count==1)
+    if($count==1)
     {
-        $select_query=$db->prepare("select * from login_mst where username='$username' and password=md5('$password') and status='$status' and access_control='$status'");
+        $select_query=$db->prepare("select * from login_mst where username='$username' and status='$status' and access_control='$status'");
         $select_query->execute();
         $count=$select_query->rowCount();
         if ($count==1)
@@ -22,7 +23,7 @@
             }
             if($password!="")
             {
-            	$authKey = "153437AHNd3Hcat5923dae5";
+                $authKey = "153437AHNd3Hcat5923dae5";
                 $mobileNumber = $username;
                 $senderId = "SENSBL";
                 $message   =  $password." is your POSiBILL account password"; 
@@ -33,7 +34,7 @@
                        'message' => $message,
                        'sender' => $senderId,
                        'route' => $route,
-                       'otp'=>$otp
+                       'otp'=>$password
                         );
                 $url="https://control.msg91.com/api/sendotp.php";
                 $ch = curl_init();
@@ -52,10 +53,10 @@
                 }
                 else
                 {
-                	$responce = array('status' =>2,'message'=>"Some technical error occured");
+                    $responce = array('status' =>2,'message'=>"Some technical error occured");
                     echo json_encode($responce);
                 }
-        	}
+            }
         }
         else
         {
@@ -65,7 +66,7 @@
     }
     else
     {
-    	$responce = array('status' =>0,'message'=>"Invalid user name");
+        $responce = array('status' =>0,'message'=>"Invalid user name");
         echo json_encode($responce);
     }
 ?>

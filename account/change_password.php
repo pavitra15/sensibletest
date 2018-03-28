@@ -14,18 +14,24 @@
         $date=date('Y-m-d');
         if($new_password==$confirm_password)
         {
-            $password_query=$db->prepare("select * from login_mst where id='$id' and password=md5('$old_password') and status='$status'");
+            $key = pack('H*', "bcb04b7e103a0cd8b54763051cef08bc55abe029fdebae5e1d417e2ffb2a00a3");
+            $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+            $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+            $old_password=mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,$old_password, MCRYPT_MODE_CBC, $iv);
+
+            $password_query=$db->prepare("select * from login_mst where id='$id' and password='$old_password' and status='$status'");
             $password_query->execute();
             $count=$password_query->rowCount();
             if($count==1)
             {
-                $update_query=$db->prepare("update login_mst set Password=md5('$new_password'), password_updated_date='$date', updated_by_id='$id', updated_by_date='$date' where id='$id'");
+                $new_password=mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,$new_password, MCRYPT_MODE_CBC, $iv);
+                $update_query=$db->prepare("update login_mst set password='$new_password', password_updated_date='$date', updated_by_id='$id', updated_by_date='$date' where id='$id'");
                 $update_query->execute();
                 $update_count=$update_query->rowCount();
                 if($update_count>0)
                 {
                     $flag=3;
-                    $mail_query=$db->prepare("select first_name, email from user_mst where id='$id'");
+                    $mail_query=$db->prepare("select first_name,last_name, email from user_mst where id='$id'");
                     $mail_query->execute();
                     while($data=$mail_query->fetch())
                     {

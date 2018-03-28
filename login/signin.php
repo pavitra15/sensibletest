@@ -16,12 +16,13 @@
         $password=$_POST['password'];
         $status="active";
         $type="user";
-        $query=$db->prepare("select * from login_mst where username='$username' and password=md5('$password') and status='$status'");
+        echo "select * from login_mst where username='$username' and password=AES_ENCRYPT($password,'manup') and status='$status'";
+        $query=$db->prepare("select * from login_mst where username='$username' and password=AES_ENCRYPT($password,'manup') and status='$status'");
         $query->execute();
         $count=$query->rowCount();
         if ($count==1)
         {
-            $select_query=$db->prepare("select * from login_mst where username='$username' and password=md5('$password') and status='$status' and access_control='$status' and type='$type'");
+            $select_query=$db->prepare("select * from login_mst where username='$username' and password='$password' and status='$status' and access_control='$status' and type='$type'");
             $select_query->execute();
             $count=$select_query->rowCount();
             if($count==1)
