@@ -13,11 +13,14 @@
     {
         $executionStartTime = microtime(true);
         $username=$_POST['username'];
-        $password=$_POST['password'];
+        $pass=$_POST['password'];
         $status="active";
         $type="user";
-        echo "select * from login_mst where username='$username' and password=AES_ENCRYPT($password,'manup') and status='$status'";
-        $query=$db->prepare("select * from login_mst where username='$username' and password=AES_ENCRYPT($password,'manup') and status='$status'");
+        $key='123acd1245120954';
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));
+        $query=$db->prepare("select * from login_mst where username='$username' and password='$password' and status='$status'");
         $query->execute();
         $count=$query->rowCount();
         if ($count==1)

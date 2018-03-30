@@ -1,16 +1,20 @@
 <?php
 	include('../connect.php');
 	$username=$_POST['username'];
-	$password=$_POST['password'];
+	$pass=$_POST['password'];
 	$deviceid=$_POST['deviceid'];
 	$status="active";
     $type="user";
-    $query=$db->prepare("select * from login_mst where username='$username' and password=md5('$password') and status='$status'");
+    $key='123acd1245120954';
+    $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+    $password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));
+    $query=$db->prepare("select * from login_mst where username='$username' and password='$password' and status='$status'");
     $query->execute();
     $count=$query->rowCount();
     if ($count==1)
     {
-    	$select_query=$db->prepare("select login_mst.id, first_name, last_name, mobile, email, state, city, pincode from login_mst, user_mst where user_mst.id=login_mst.id and username='$username' and password=md5('$password') and status='$status' and access_control='$status' and type='$type'");
+    	$select_query=$db->prepare("select login_mst.id, first_name, last_name, mobile, email, state, city, pincode from login_mst, user_mst where user_mst.id=login_mst.id and username='$username' and password='$password' and status='$status' and access_control='$status' and type='$type'");
         $select_query->execute();
         $count=$select_query->rowCount();
         if($count==1)
@@ -60,7 +64,7 @@
     else
     {
         $inactive_status='inactive';
-        $query=$db->prepare("select * from login_mst where username='$username' and password=md5('$password') and status='$inactive_status'");
+        $query=$db->prepare("select * from login_mst where username='$username' and password='$password' and status='$inactive_status'");
         $query->execute();
         $count=$query->rowCount();
         if ($count==1)

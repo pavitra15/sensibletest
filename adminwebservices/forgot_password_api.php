@@ -23,31 +23,34 @@
             }
             if($password!="")
             {
-                $authKey = "153437AHNd3Hcat5923dae5";
-                $mobileNumber = $username;
-                $senderId = "SENSBL";
-                $message   =  $password." is your POSiBILL account password"; 
-                $route = "default";
-                $postData = array(
-                       'authkey' => $authKey,
-                       'mobiles' => $mobileNumber,
-                       'message' => $message,
-                       'sender' => $senderId,
-                       'route' => $route,
-                       'otp'=>$password
-                        );
-                $url="https://control.msg91.com/api/sendotp.php";
-                $ch = curl_init();
-                curl_setopt_array($ch, array(
-                CURLOPT_URL => $url,
+                $pass=base64_decode($password);
+                $key='123acd1245120954';
+                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+                $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+                $decode_password = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));
+                $curl = curl_init();
+
+                $message   =  $decode_password." is your POSiBILL account password";
+
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => "http://api.msg91.com/api/v2/sendsms",
                 CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_POST => true,
-                CURLOPT_POSTFIELDS => $postData
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 30,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "POST",
+                CURLOPT_POSTFIELDS => '{"sender": "SOCKET", "route": 4, "country": 91, "sms": [ { "message": "'.$message.'", "to": [ "'.$username.'"] } ] }',
+                CURLOPT_SSL_VERIFYHOST => 0,
+                CURLOPT_SSL_VERIFYPEER => 0,
+                CURLOPT_HTTPHEADER => array(
+                "authkey:153437AHNd3Hcat5923dae5",
+                "content-type: application/json"
+                ),
                 ));
-                curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-                curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-                if(curl_exec($ch))
+               if(curl_exec($curl))
                 {
+                    curl_close($curl);
                     $responce = array('status' =>3,'message'=>"Password send to your mobile");
                     echo json_encode($responce);
                 }

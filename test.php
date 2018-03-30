@@ -86,9 +86,42 @@
 	// 		while($product_data=$product_query->fetch());
 	// 	}
 
-		
- echo 
- 	
+
+function encrypt($value, $key)
+{
+  $text = $value;
+  $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+  $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+  $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $text, MCRYPT_MODE_ECB, $iv);
+
+  return $crypttext;
+}
+
+
+function decrypt($value, $key)
+{
+  $crypttext = $value;
+  $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+  $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+  $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $iv);
+  return trim($decrypttext);
+}
+
+$Data="12345";
+
+$EncryptData = base64_encode(encrypt($Data, '123acd1245120954'));
+
+echo $EncryptData;
+
+$EncryptData=base64_decode($EncryptData);
+
+// Use decrypt function to decrypt the encrypted data 
+// You have to provide the encrypted data which you want to decrypt and provide secure key
+// You have to use same secure key to get the plain text data from ciphertext
+$DecryptData = decrypt($EncryptData, '123acd1245120954');
+ 
+ echo $DecryptData;
+ // echo $DecryptData ;	
 ?>
 
 

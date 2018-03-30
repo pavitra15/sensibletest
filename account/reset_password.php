@@ -5,12 +5,15 @@
     if(isset($_POST['update']))
     {
         $id=$_SESSION['login_id'];
-        $password=$_POST['password'];
+        $pass=$_POST['password'];
         $date = new DateTime("now", new DateTimeZone('Asia/Kolkata') );
         $clone= clone $date;
         $current_date=$clone->format( 'Y-m-d' ); 
-        echo "update login_mst set password=AES_ENCRYPT('$password','manup'),password_updated_date='$current_date' where id='$id'";
-        $update_query=$db->prepare("update login_mst set password=AES_ENCRYPT('$password','manup'),password_updated_date='$current_date' where id='$id'");
+        $key='123acd1245120954';
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+        $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+        $password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));
+        $update_query=$db->prepare("update login_mst set password='$password',password_updated_date='$current_date' where id='$id'");
         $update_query->execute();
         $count=$update_query->rowCount();
         if($count==1)

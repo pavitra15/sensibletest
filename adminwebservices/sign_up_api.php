@@ -3,14 +3,17 @@
 	$first_name=$_POST['first_name'];
     $last_name=$_POST['last_name'];
     $mobile=$_POST['mobile'];
-    $password=$_POST['password'];
+    $pass=$_POST['password'];
     $deviceid=$_POST['deviceid'];
     $email=$_POST['email'];
     $terms=$_POST['terms'];
 	$user="user";
     $date = new DateTime("now", new DateTimeZone('Asia/Kolkata') );
     $log_date=$date->format('Y-m-d H:i:s');
-    
+    $key='123acd1245120954';
+    $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
+    $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+    $password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));
     $date = new DateTime("now", new DateTimeZone('Asia/Kolkata') );
     $current_date=$date->format('Y-m-d');
     $query=$db->prepare("select * from login_mst where username='$mobile'");
@@ -23,12 +26,12 @@
             $db->beginTransaction();
             $status='inactive';
             $username_verified='No';
-            $insert_query=$db->prepare("insert into login_mst (username,username_verified,password,password_updated_date,status,type,created_by_date) values('$mobile','$username_verified',md5('$password'),'$current_date','$status','$user','$current_date')");
+            $insert_query=$db->prepare("insert into login_mst (username,username_verified,password,password_updated_date,status,type,created_by_date) values('$mobile','$username_verified','$password','$current_date','$status','$user','$current_date')");
             $insert_query->execute();
             $insert_count=$insert_query->rowCount();
             if($insert_count==1)
             {
-                $select_query=$db->prepare("select id from login_mst where username='$mobile' and password=md5('$password')");
+                $select_query=$db->prepare("select id from login_mst where username='$mobile' and password='$password'");
                 $select_query->execute();
                 while ($login_data=$select_query->fetch()) 
                 {

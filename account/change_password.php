@@ -6,25 +6,25 @@
 <?php
     if(isset($_POST['update']))
     {
-        $old_password=$_POST['old_password'];
-        $new_password=$_POST['new_password'];
+        $old_pass=$_POST['old_password'];
+        $new_pass=$_POST['new_password'];
         $confirm_password=$_POST['confirm_password'];
         $id=$_SESSION['login_id'];
         $status="active";
         $date=date('Y-m-d');
         if($new_password==$confirm_password)
         {
-            $key = pack('H*', "bcb04b7e103a0cd8b54763051cef08bc55abe029fdebae5e1d417e2ffb2a00a3");
-            $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+            $key='123acd1245120954';
+            $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
             $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-            $old_password=mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,$old_password, MCRYPT_MODE_CBC, $iv);
-
+            $old_password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $old_pass, MCRYPT_MODE_ECB, $iv));
+            
             $password_query=$db->prepare("select * from login_mst where id='$id' and password='$old_password' and status='$status'");
             $password_query->execute();
             $count=$password_query->rowCount();
             if($count==1)
             {
-                $new_password=mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,$new_password, MCRYPT_MODE_CBC, $iv);
+                $new_password=base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $new_pass, MCRYPT_MODE_ECB, $iv));
                 $update_query=$db->prepare("update login_mst set password='$new_password', password_updated_date='$date', updated_by_id='$id', updated_by_date='$date' where id='$id'");
                 $update_query->execute();
                 $update_count=$update_query->rowCount();

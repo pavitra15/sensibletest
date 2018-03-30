@@ -14,10 +14,10 @@
         $user="user";
         $status="inactive";
         $gid="";
-        $key = pack('H*', "bcb04b7e103a0cd8b54763051cef08bc55abe029fdebae5e1d417e2ffb2a00a3");
-        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_128, MCRYPT_MODE_CBC);
+        $key='123acd1245120954';
+        $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-        $password=mcrypt_encrypt(MCRYPT_RIJNDAEL_128, $key,$pass, MCRYPT_MODE_CBC, $iv);
+        $password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));
 
         $select_query=$db->prepare("select * from login_mst where username='$username'");
         $select_query->execute();
