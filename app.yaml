@@ -117,6 +117,10 @@ handlers:
   script: /report/credit_report.php
   secure: always
 
+- url: /report/category_report
+  script: /report/category_report.php
+  secure: always
+
 - url: /report/customer_report
   script: /report/customer_report.php
   secure: always
@@ -288,10 +292,6 @@ handlers:
 
 - url: /change_request/change_request
   script: /change_request/change_request.php
-  secure: always
-
-- url: /super_admin/token
-  script: /super_admin/token.php  
   secure: always
 
 - url: /super_admin/allow_access

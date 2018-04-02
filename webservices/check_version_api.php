@@ -4,6 +4,14 @@
     // $token=$_POST['token'];
     $deviceid=$_POST['deviceid'];
     $versions=$_POST['version'];
+    if(isset($_POST['apk_id']))
+    {
+        $apk_id=$_POST['apk_id'];
+    }
+    else
+    {
+        $apk_id=1;
+    }
     $status="active";
     $url = json_decode(file_get_contents("http://api.ipinfodb.com/v3/ip-city/?key=2b3d7d0ad1a285279139487ce77f3f58d980eea9546b5ccc5d08f5ee62ce7471&ip=".$_SERVER['REMOTE_ADDR']."&format=json"));
     $country=$url->countryName;
@@ -42,7 +50,7 @@
             $version_update_query=$db->prepare("update device set apk_version='$versions' where deviceid='$deviceid'");
             $version_update_query->execute();
         }
-        $sth = $db->prepare("select * from apk where apk_id=1");
+        $sth = $db->prepare("select * from apk where apk_id='$apk_id'");
         $sth->execute();
         if ($data = $sth->fetch()) 
         {

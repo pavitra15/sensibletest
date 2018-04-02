@@ -108,6 +108,7 @@
                         </tr>  
             <?php
             }  
+            echo'</tr>';
             }  
             ?>
             </tbody> 
