@@ -18,11 +18,41 @@
     $token_count=$query->rowCount();
     if($token_count==1)
     {
-        $query=$db->prepare("select customer_mst.customer_id, customer_name, customer_contact,  bill_no, bill_date, bill_amt, cash, credit, digital from transaction_mst, customer_mst where transaction_mst.customer_id= customer_mst.customer_id and customer_mst.deviceid='$d_id'");
-        $query->execute();
-        $data=$query->fetchAll(PDO::FETCH_ASSOC);
-        $responce = array('status' =>1 ,'customer_report' =>$data);   
-        echo json_encode($responce, JSON_NUMERIC_CHECK);
+        $product_query=$db->prepare("select customer_id, customer_name, customer_contact from  customer_mst where customer_mst.deviceid='$d_id'");
+        $product_query->execute();
+        $response='{"status":1,"customer_report":[';
+        if($data=$product_query->fetch())
+        {
+            do
+            {
+                $customer_id=$data['customer_id'];
+                $response.='{"customer_name":"'.$data['customer_name'].'","mobile":"'.$data['customer_contact'].'","detail":[';
+                $count_query=$db->prepare("select bill_no, bill_date, bill_amt, cash, credit, digital from transaction_mst where transaction_mst.customer_id='$customer_id'");
+                $count_query->execute();
+                if($row_cnt = $count_query->fetch())
+                {
+                    do
+                    {
+                        $response.='{"bill_no":"'.$row_cnt['bill_no'].'","bill_date":"'.$row_cnt['bill_date'].'","bill_amt":'.$row_cnt['bill_amt'].',"cash":'.$row_cnt['cash'].',"credit":'.$row_cnt['credit'].',"digital":'.$row_cnt['digital'].'},';
+                    }
+                    while ($row_cnt = $count_query->fetch());
+                    $response = rtrim($response, ',');
+                    $response.=']},';
+                }
+                else
+                {
+                    $response.=']},';
+                }       
+            }
+            while($data=$product_query->fetch());
+            $response = rtrim($response, ',');
+            $response.=']}';
+        }
+        else
+        {
+            $response.=']}';
+        }
+        echo $response;
     }
     else
     {

@@ -17,7 +17,7 @@
 	$token_count=$query->rowCount();
 	if($token_count==1)
 	{
-		$about_query = $db->prepare("select * from dealer_mst,admin_device where about.dealer_id=admin_device.dealer_id and admin_device.deviceid='$deviceid' and branding=1");
+		$about_query = $db->prepare("select * from dealer_mst,admin_device where dealer_mst.dealer_id=admin_device.dealer_id and admin_device.deviceid='$deviceid' and branding='1'");
 		$about_query->execute();
 		$about_count=$about_query->rowCount();
 		if($about_count>0)

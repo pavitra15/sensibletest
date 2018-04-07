@@ -70,7 +70,7 @@
                 addTo($email, 'Sensible Connect')->
                 setFrom('info@sensibleconnect.com', 'Sensible Connect')->
                 setReplyTo('info@sensibleconnect.com','Sensible Connect')->
-                setSubject('Activate your account')->
+                setSubject('Account password updated')->
                 setText($message)->
                 setHtml($message);
                 $mailin->send();

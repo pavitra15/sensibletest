@@ -36,7 +36,7 @@
         	$device_query=$db->prepare("select d_id, deviceid, serial_no, device_name, language_id, device_type, tax_type from device where id='$id'");
             $device_query->execute();
             $device_data=$device_query->fetchAll(PDO::FETCH_ASSOC);
-        	$responce = array('status' =>1 ,'login_info' =>$login_data,'device_info' =>$device_data);   
+        	$responce = array('status' =>1 ,'token' =>$token ,'login_info' =>$login_data,'device_info' =>$device_data);   
             echo json_encode($responce,	JSON_NUMERIC_CHECK);
         }
         else

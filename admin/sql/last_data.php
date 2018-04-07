@@ -68,6 +68,7 @@ only screen and (max-width: 760px),
         <tbody id="tab_id">
             <?php
                 $status="active";
+                $search=$_POST['search'];
                 if(isset($_POST['page']))
                 {
                     $page=$_POST['page'];
@@ -78,11 +79,11 @@ only screen and (max-width: 760px),
                 }
                 $limit=15;
                 $start_from = ($page-1) * $limit;
-                $total_query=$db->prepare("select serial_no, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id order by last_login DESC");
+                $total_query=$db->prepare("select serial_no, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id and serial_no LIKE '$search%' order by last_login DESC");
                 $total_query->execute();
                 $total_records=$total_query->rowCount();    
                 $total_pages = ceil($total_records / $limit);
-                $query=$db->prepare("select serial_no, device_name, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id order by last_login DESC LIMIT $start_from, $limit");
+                $query=$db->prepare("select serial_no, device_name, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id and serial_no LIKE '$search%' order by last_login DESC LIMIT $start_from, $limit");
                 $query->execute();
                 while($data=$query->fetch())
                 {
@@ -111,13 +112,14 @@ only screen and (max-width: 760px),
         {         
             $('.gen').click(function()
             {
+                var search=$('#search').val();
                 var page=$(this).text();
                 $('#data-display').show();
                 $('.page-loader-wrapper').show();
                 $.ajax({
                     type: 'POST',
                     url: 'sql/last_data.php',
-                    data: { "page":page},
+                    data: { "page":page,"search":search},
                     cache: false,
                     success: function(data)
                     {
@@ -130,13 +132,14 @@ only screen and (max-width: 760px),
 
             $('.prev').click(function()
             {
+                var search=$('#search').val();
                 var page= <?php echo $page+1;?>;
                 $('#data-display').show();
                 $('.page-loader-wrapper').show();
                 $.ajax({
                     type: 'POST',
                     url: 'sql/last_data.php',
-                    data: { "page":page},
+                    data: { "page":page,"search":search},
                     cache: false,
                     success: function(data)
                     {
@@ -147,13 +150,14 @@ only screen and (max-width: 760px),
             });
                  
             $('.next').click(function(){
+                var search=$('#search').val();
                 var page= <?php echo $page+1;?>;
                 $('#data-display').show();
                 $('.page-loader-wrapper').show();
                 $.ajax({
                     type: 'POST',
                     url: 'sql/last_data.php',
-                    data: { "page":page},
+                    data: { "page":page,"search":search},
                     cache: false,
                     success: function(data)
                     {

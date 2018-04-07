@@ -1,10 +1,10 @@
 <?php
     include('../connect.php');
     // $token=$_POST['token'];
-    $deviceid=$_POST['deviceid'];
-    if(isset($_POST['apk_id']))
+    $deviceid=$_GET['deviceid'];
+    if(isset($_GET['apk_id']))
     {
-        $apk_id=$_POST['apk_id'];
+        $apk_id=$_GET['apk_id'];
     }
     else
     {

@@ -95,6 +95,14 @@
             <!-- Widgets -->
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 card">
+                	<div class="header">
+                        <div class="row clearfix">
+                            <div class="col-xs-12 col-sm-6"></div>
+                           	<div class="col-xs-3 col-xs-offset-3 align-right">
+                                <input type="text" name="search" id="search" placeholder="Search">
+                            </div>
+                       	</div>
+                    </div>
                     <div class="body">
                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="data-display" style="display: none">
                         </div>
@@ -115,18 +123,60 @@
         $(document).ready(function() 
         {  
             var page="1";
+            var search=$('#search').val();
             $('#data-display').show();
             $('.page-loader-wrapper').show();
             $.ajax({
                 type: 'POST',
                 url: 'sql/last_data.php',
-                data: { "page":page},
+                data: { "page":page,"search":search},
                 cache: false,
                 success: function(data)
                 {
                     $('.page-loader-wrapper').hide();
                     $('#data-display').html(data);
                 }
+            });
+        });
+
+        $(document).ready(function() 
+        {
+            $("#search").keyup(function()
+            {
+                var page="1";
+	            var search=$('#search').val();
+	            if(search.length>3)
+	            {
+		            $('#data-display').show();
+		            $('.page-loader-wrapper').show();
+		            $.ajax({
+		                type: 'POST',
+		                url: 'sql/last_data.php',
+		                data: { "page":page,"search":search},
+		                cache: false,
+		                success: function(data)
+		                {
+		                    $('.page-loader-wrapper').hide();
+		                    $('#data-display').html(data);
+		                }
+		            });
+		        }
+		        else if(search.length==0)
+		        {
+		        	$('#data-display').show();
+		            $('.page-loader-wrapper').show();
+		            $.ajax({
+		                type: 'POST',
+		                url: 'sql/last_data.php',
+		                data: { "page":page,"search":search},
+		                cache: false,
+		                success: function(data)
+		                {
+		                    $('.page-loader-wrapper').hide();
+		                    $('#data-display').html(data);
+		                }
+		            });
+		        }  
             });
         });
 
