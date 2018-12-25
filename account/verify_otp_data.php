@@ -13,15 +13,18 @@
         {
             while ($data=$query->fetch())
             {
+                //otp sent date
                 $dtm=$data['dtm'];
             }  
             $current=date('Y-m-d h:i:s');
             $first=strtotime($current);
             $second=strtotime($dtm);
+            //current time - otp sent time < 5 min
             if(($first-$second)<300)
             {       
                 try
                 {
+                    //PDO obj ref
                     $db->beginTransaction();
                     $status="active";
                     $verify="yes";
@@ -53,19 +56,22 @@
                     }
                     if($db->commit())
                     {
+                        //otp verifyed
                         echo 1;
                     }
                     
                 }
                 catch(Exception $e)
                 {
-                    // echo $e;
+                    
                     echo 2;
+                    // removes current record
                     $db->rollBack();
                 }
             }
             else
             {
+                //timeout
                 echo 3;
             }
         }

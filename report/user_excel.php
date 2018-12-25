@@ -22,7 +22,7 @@
     }
 
     $status='active';
-    $product_query=$db->prepare("select transaction_id, bill_no, bill_amt, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+    $product_query=$db->prepare("select DISTINCT bill_no, transaction_id, bill_amt, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
 
     $product_query->execute();
     $response='{"data":[';

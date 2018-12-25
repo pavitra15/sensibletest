@@ -79,11 +79,11 @@ only screen and (max-width: 760px),
                 }
                 $limit=15;
                 $start_from = ($page-1) * $limit;
-                $total_query=$db->prepare("select serial_no, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id and serial_no LIKE '$search%' order by last_login DESC");
+                $total_query=$db->prepare("select serial_no, device_name, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id and (serial_no LIKE '$search%' OR first_name LIKE '$search%'  OR last_name LIKE '$search%' OR device_name LIKE '$search%') order by last_login DESC");
                 $total_query->execute();
                 $total_records=$total_query->rowCount();    
                 $total_pages = ceil($total_records / $limit);
-                $query=$db->prepare("select serial_no, device_name, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id and serial_no LIKE '$search%' order by last_login DESC LIMIT $start_from, $limit");
+                $query=$db->prepare("select serial_no, device_name, last_connect.deviceid,mobile, first_name, last_name , last_login, last_connect.city, last_connect.state from last_connect, device, user_mst where last_connect.deviceid=device.deviceid and device.id= user_mst.id and (serial_no LIKE '$search%' OR first_name LIKE '$search%'  OR last_name LIKE '$search%'  OR device_name LIKE '$search%') order by last_login DESC LIMIT $start_from, $limit");
                 $query->execute();
                 while($data=$query->fetch())
                 {

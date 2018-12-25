@@ -40,10 +40,13 @@
                 $query->execute();
                 if($query->rowCount())
                 {
+                    //rowCount returns 1 if record insterted
+                    //otp sent to mobile
                    echo 1;
                 }
                 else
                 {
+                    //
                     echo 2;
                 }
             }

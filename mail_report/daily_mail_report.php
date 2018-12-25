@@ -54,7 +54,8 @@
                 $end_date = $clone->format( 'Y-m-d 23:59:59' );
                 $deviceid=$deviceid_data['d_id'];
                 $device_name=$deviceid_data['device_name'];
-                $transaction_query=$db->prepare("select sum(bill_amt) as total_Sale, sum(tax_amt) as total_tax, count(bill_no) as bill_count from transaction_mst where device_id='$deviceid' and bill_date BETWEEN '$start_date' and '$end_date'");
+                $status='active';
+                $transaction_query=$db->prepare("select sum(bill_amt) as total_Sale, sum(tax_amt) as total_tax, count(bill_no) as bill_count from transaction_mst where device_id='$deviceid' and status='$status' and bill_date BETWEEN '$start_date' and '$end_date'");
                 $transaction_query->execute();
                 while ($transaction_data=$transaction_query->fetch())
                 {
@@ -150,8 +151,6 @@
                             setText($message)->
                             setHtml($message);
                             $res = $mailin->send();
-                    
-
         }
 	}           
 ?>

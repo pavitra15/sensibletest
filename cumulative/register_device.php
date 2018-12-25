@@ -110,7 +110,7 @@
                             addTo($email, 'Sensible Connect')->
                             setFrom('info@sensibleconnect.com', 'Sensible Connect')->
                             setReplyTo('info@sensibleconnect.com','Sensible Connect')->
-                            setSubject('Device Registration inforamation')->
+                            setSubject('Device Registration information')->
                             setText($message)->
                             setHtml($message);
                         $mailin->send();

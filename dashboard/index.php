@@ -84,6 +84,7 @@
                             $tax_type=$name_data['tax_type'];
                             $prnt_billno=$name_data['prnt_billno'];
                             $prnt_billtime=$name_data['prnt_billtime'];
+
                         }
                         $_SESSION['device_name']=$device_name;
                     ?>
@@ -122,7 +123,8 @@
                     </li>
                     <?php 
                         include('../notification/device_notification.php');
-                    ?>                    
+                    ?> 
+
                     <li class="pull-right"><a href="javascript:void(0);" class="js-right-sidebar" data-close="true"><i class="material-icons">more_vert</i></a></li>
                 </ul>
             </div>
@@ -140,13 +142,8 @@
                 include('../left_menu.php');
             ?>    
             </div>
-            <!-- #Menu -->
-            <!-- Footer -->
             <?php include('../footer.html'); ?>
-            <!-- #Footer -->
         </aside>
-        <!-- #END# Left Sidebar -->
-        <!-- Right Sidebar -->
         <aside id="rightsidebar" class="right-sidebar">
             <ul class="nav nav-tabs tab-nav-right" role="tablist">
                 <li role="presentation" class="active"><a href="#skins" data-toggle="tab">DEVICE</a></li>
@@ -190,10 +187,10 @@
                     $name="...";
                     $user_name="...";
                     $checkout=0;
-                    $start_date = $clone->format( 'Y-m-d 00:00:00' );
+                    $start_date = $clone->format('Y-m-d 00:00:00' );
                     $status='active';
                     $end_date = $clone->format( 'Y-m-d 23:59:59');
-                    $checkout_query=$db->prepare("select sum(bill_amt) as total, count(bill_no) as count from transaction_mst where device_id='$d_id' and transaction_mst.status='$status'");
+                    $checkout_query=$db->prepare("select sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount+round_off,parcel_amt+bill_amt-discount+round_off)) as total, count(bill_no) as count from ( select distinct bill_no, tax_state,tax_amt, parcel_amt, bill_amt, discount, round_off from transaction_mst where device_id='$d_id' and transaction_mst.status='$status')T1");
                     $checkout_query->execute();
                     while($data=$checkout_query->fetch())
                     {
@@ -204,14 +201,14 @@
                     {
                         $checkout=round(($total/$count),2);
                     }
-                    $top_query=$db->prepare("select english_name, sum(transaction_dtl.quantity) as count from transaction_dtl,product, transaction_mst where transaction_dtl.item_id=product.product_id and device_id='$d_id' and transaction_dtl.transaction_id=transaction_mst.transaction_id  and transaction_mst.status='$status' group by item_id Order by sum(transaction_dtl.quantity) desc limit 1");
+                    $top_query=$db->prepare("select english_name, sum(quantity) as count from( select distinct bill_no, english_name, item_id, transaction_dtl.quantity from transaction_dtl,product, transaction_mst where transaction_dtl.item_id=product.product_id and device_id='$d_id' and transaction_dtl.transaction_id=transaction_mst.transaction_id  and transaction_mst.status='$status')T1 group by item_id Order by sum(quantity) desc limit 1");
                     $top_query->execute();
                     while($data_top=$top_query->fetch())
                     {
                         $name=$data_top['english_name'];
                     }
 
-                    $user_query=$db->prepare("select user_name, count(transaction_mst.user_id) as count from user_dtl, transaction_mst where transaction_mst.user_id=user_dtl.user_id and device_id='$d_id' and transaction_mst.status='$status' group by transaction_mst.user_id Order by count(transaction_mst.user_id) desc limit 1");
+                    $user_query=$db->prepare("select user_name from( select distinct bill_no, user_name, transaction_mst.user_id, tax_state, tax_amt, parcel_amt,bill_amt, discount  from user_dtl, transaction_mst where transaction_mst.user_id=user_dtl.user_id and device_id='$d_id' and transaction_mst.status='$status') T1 group by user_id Order by sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount,parcel_amt+bill_amt-discount)) desc limit 1");
                     $user_query->execute();
                     while($data=$user_query->fetch())
                     {
@@ -304,7 +301,7 @@
                                     {
                                         $start_date=$date->format('Y-'.$i.'-01');
                                         $end_date=$date->format('Y-'.$i.'-31');
-                                        $first_query=$db->prepare("select sum(bill_amt) as total from transaction_mst where device_id='$d_id' and transaction_mst.status='$status' and  bill_date between '$start_date' and '$end_date'");
+                                        $first_query=$db->prepare("select sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount+round_off,parcel_amt+bill_amt-discount+round_off)) as total, count(bill_no) as count from ( select distinct bill_no, tax_state,tax_amt, parcel_amt, bill_amt, discount, round_off from transaction_mst where device_id='$d_id' and transaction_mst.status='$status' and  bill_date between '$start_date' and '$end_date')T1");
                                         $first_query->execute();
                                         $month=date ("M", mktime(0,0,0,$i,1,0));
                                         while ($first_data=$first_query->fetch()) 
@@ -367,7 +364,7 @@
                     $daily_checkout=0;
                     $start_date = $clone->format( 'Y-m-d 00:00:00' );
                     $end_date = $clone->format( 'Y-m-d 23:59:59' );
-                    $daily_checkout_query=$db->prepare("select sum(bill_amt) as total, count(bill_no) as count from transaction_mst where device_id='$d_id' and transaction_mst.status='$status' and  bill_date between '$start_date' and '$end_date'");
+                    $daily_checkout_query=$db->prepare("select sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount+round_off,parcel_amt+bill_amt-discount+round_off)) as total, count(bill_no) as count from ( select distinct bill_no, tax_state,tax_amt, parcel_amt, bill_amt, discount, round_off from transaction_mst where device_id='$d_id' and transaction_mst.status='$status' and  bill_date between '$start_date' and '$end_date')T1");
                     $daily_checkout_query->execute();
                     while($daily_data=$daily_checkout_query->fetch())
                     {
@@ -474,7 +471,7 @@
                                 $print_date=$clone->format('d');
                                 $start_date=$clone->format( 'Y-m-d 00:00:00');
                                 $end_date=$clone->format( 'Y-m-d 23:59:59');
-                                $first_query=$db->prepare("select sum(bill_amt) as total from transaction_mst where device_id='$d_id' and transaction_mst.status='$status' and  bill_date between '$start_date' and '$end_date'");
+                                $first_query=$db->prepare("select sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount+round_off,parcel_amt+bill_amt-discount+round_off)) as total, count(bill_no) as count from ( select distinct bill_no, tax_state,tax_amt, parcel_amt, bill_amt, discount,round_off from transaction_mst where device_id='$d_id' and transaction_mst.status='$status' and  bill_date between '$start_date' and '$end_date')T1");
                                 $first_query->execute();
                                 while ($first_data=$first_query->fetch()) 
                                 {   
@@ -548,7 +545,7 @@
                             $clone->modify( '-7 day' );
                             $start_date=$clone->format( 'Y-m-d 00:00:00');
                             $end_date=$clone->format( 'Y-m-d 23:59:59');
-                            $category_query=$db->prepare("select category_name, sum(transaction_dtl.total_amt) as total from category_dtl,product, transaction_dtl where category_dtl.deviceid='$d_id' and product.category_id= category_dtl.category_id and transaction_dtl.item_id=product.product_id group by(category_dtl.category_id)");
+                            $category_query=$db->prepare("select category_name, sum(transaction_dtl.total_amt) as total from category_dtl,product, transaction_dtl, transaction_mst where category_dtl.deviceid='$d_id' and product.category_id= category_dtl.category_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and transaction_mst.transaction_id=transaction_dtl.transaction_id and transaction_mst.status='active' group by(category_dtl.category_id)");
                             $category_query->execute();
                             while ($category_data=$category_query->fetch()) 
                             {   
@@ -647,8 +644,19 @@
             </div>
             <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
             <script type="text/javascript">
+
+                  $(document).ready(function()
+                    {
+                         setTimeout(
+                                  function() 
+                                  {
+                                   $('.page-loader-wrapper').hide();
+                                  }, 10000);
+                         
+                    });
                 $(document).ready(function()
                 {
+
                     $.ajax({
                         type: 'POST',
                         url: '../sql/check_version.php',
@@ -663,6 +671,21 @@
                         }
                     });
                 });
+
+                $(document).ready(function()
+                {
+                    $.ajax({
+                        type: 'POST',
+                        url: '../sql/check_last_sync.php',
+                        data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+                        cache: false,
+                        success: function(data)
+                        {
+                            showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+                        }
+                    });
+                });
+
             </script>
         </div>
     </section>

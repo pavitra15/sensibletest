@@ -1,7 +1,7 @@
 <?php
-	include('../connect.php');
+    include('../connect.php');
 ?>
-	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                 <div class="card">
                     <div class="header">
                         <h2>DEVICE WISE SALE REPORT</h2>
@@ -12,7 +12,9 @@
                       
                         $cat="[
                             ['Device', 'Sale']";          
-                            $category_query=$db->prepare("select d_id, device_name, sum(transaction_mst.bill_amt) as total from device, transaction_mst where transaction_mst.device_id=device.d_id and  device.id='$id' group by(device.d_id)");
+
+                            $category_query=$db->prepare("select d_id, device_name, sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount+round_off,parcel_amt+bill_amt-discount+round_off)) as total from( select distinct bill_no, d_id, device_name, tax_state, tax_amt, parcel_amt, bill_amt, discount,round_off from device, transaction_mst where transaction_mst.device_id=device.d_id and  device.id='$id'  and device.status='active' and transaction_mst.status='active') T1 group by(d_id) ");
+
                             $category_query->execute();
                             while ($category_data=$category_query->fetch()) 
                             {   

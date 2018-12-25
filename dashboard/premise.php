@@ -183,6 +183,7 @@
                                             <th>Premise Name</th>
                                             <th>No of Table</td>
                                             <th>Range</td>
+                                            <td>Type</td>
                                             <th>Action</td>
                                     </thead>
                                     <tbody>
@@ -202,6 +203,12 @@
                                                 <td><input type="text" id="premise'.$data['premise_id'].'" class="test-input cat" value="'.$data['premise_name'].'" maxlength="30"></td>
                                                 <td><input type="number"  id="no'.$data['premise_id'].'" class="premise" value="'.$data['no_of_table'].'" ></td>
                                                 <td><input type="number"  id="table_range'.$data['premise_id'].'" class="premise" value="'.$data['table_range'].'" ></td>
+                                                <td><select class="form-control" id="premise_type'.$data['premise_id'].'">
+                                                        <option>'.$data['premise_type'].'</option>
+                                                        <option>Table</option>
+                                                        <option>Room</option>
+                                                    </select>
+                                                </td>
                                                 <th><button type="button" class="btn bg-red btn-xs removebutton" title="Remove this row"><i class="material-icons">delete</i></button></th>
                                         </tr>';
                                         }
@@ -210,6 +217,11 @@
                                             <td><input type="text"  class="premise_name test-input cat" name="" maxlength="30"></td>
                                             <td><input type="number" class="table_no premise" name=""></td>
                                             <td><input type="number" class="table_range premise" name=""></td>
+                                            <td><select class="form-control premise_type premise">
+                                                    <option>Table</option>
+                                                    <option>Room</option>
+                                                </select>
+                                            </td>
                                             <th><button type="button" class="btn bg-red btn-xs removebutton" title="Remove this row"><i class="material-icons">delete</i></button></th>
                                         </tr>
                                     </tbody>
@@ -339,16 +351,19 @@ var ID=$(this).attr('id');
 $("#premise"+ID).hide();
 $("#no"+ID).hide();
 $("#table_range"+ID).hide();
+$("#premise_type"+ID).hide();
 $("#premise"+ID).show();
 $("#no"+ID).show();
 $("#table_range"+ID).show();
+$("#premise_type"+ID).show();
 }).change(function()
 {
 var ID=$(this).attr('id');
 var first=$("#premise"+ID).val();
 var last=$("#no"+ID).val();
 var table_range=$("#table_range"+ID).val();
-var dataString = 'id='+ ID +'&firstname='+first+'&lastname='+last+'&table_range='+table_range+'&d_id='+<?php echo $_SESSION['d_id']; ?>;
+var premise_type=$("#premise_type"+ID).val();
+var dataString = 'id='+ ID +'&firstname='+first+'&lastname='+last+'&table_range='+table_range+'&premise_type='+premise_type+'&d_id='+<?php echo $_SESSION['d_id']; ?>;
 $("#premise"+ID).html(''); // Loading image
 
 if(first.length>0&& last.length>0)
@@ -414,6 +429,7 @@ $('#save').click(function(){
     var premise_name = [];
     var table_no = [];
     var table_range = [];
+    var premise_type = [];
   
   $('.premise_name').each(function(){
    premise_name.push($(this).val());
@@ -426,8 +442,12 @@ $('#save').click(function(){
   $('.table_range').each(function(){
    table_range.push($(this).val());
     });
+
+  $('.premise_type').each(function(){
+   premise_type.push($(this).val());
+    });
  
- dataString={premise_name:premise_name, table_no:table_no, table_range:table_range , id:<?php echo $_SESSION['login_id']; ?>, d_id:<?php echo $_SESSION['d_id']; ?>};
+ dataString={premise_name:premise_name, table_no:table_no, table_range:table_range , premise_type:premise_type, id:<?php echo $_SESSION['login_id']; ?>, d_id:<?php echo $_SESSION['d_id']; ?>};
   $.ajax({
    url:"../sql/insert_premise.php",
    method:"POST",
@@ -519,6 +539,20 @@ $("input[type=number]").on("focus", function() {
     $(document).ready(function()
     {
         $('#left_application').addClass('active');
+    });
+
+    $(document).ready(function()
+    {
+        $.ajax({
+            type: 'POST',
+            url: '../sql/check_last_sync.php',
+            data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+            cache: false,
+            success: function(data)
+            {
+                showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+            }
+        });
     });
 </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

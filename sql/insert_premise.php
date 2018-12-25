@@ -10,11 +10,13 @@
         $premise_name = $_POST['premise_name'];
         $table_no = $_POST['table_no'];
         $table_range = $_POST['table_range'];
+        $premise_type = $_POST['premise_type'];
         for($count = 0; $count<count($premise_name); $count++)
         {
             $premise_name_clean = strtoupper(trim($premise_name[$count]));
             $table_no_clean =$table_no[$count];
             $table_range_clean =$table_range[$count];
+            $premise_type_clean =$premise_type[$count];
             if($premise_name_clean=="" || $table_no_clean=="")
             {}
             else
@@ -35,7 +37,7 @@
                         else
                         {
                             $db->beginTransaction();
-                            $query=$db->prepare("insert into premise_dtl (premise_name, no_of_table, table_range, deviceid, status, created_by_date, created_by_id) values('$premise_name_clean', '$table_no_clean', '$table_range_clean', '$d_id', '$status' , '$date', '$id')");
+                            $query=$db->prepare("insert into premise_dtl (premise_name, no_of_table, table_range,premise_type, deviceid, status, created_by_date, created_by_id) values('$premise_name_clean', '$table_no_clean', '$table_range_clean', '$premise_type_clean','$d_id', '$status' , '$date', '$id')");
                             $query->execute();
                             $db->commit();
                             $rowcount+=$query->rowcount();

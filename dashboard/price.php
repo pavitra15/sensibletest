@@ -44,7 +44,11 @@
             <p>Please wait...</p>
         </div>
     </div>
-    
+    <style type="text/css">
+        .sack{
+        display: flex;
+    }
+    </style>
     <div class="overlay"></div>
     
     <nav class="navbar">
@@ -163,18 +167,18 @@
             <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
-                        <form action="" method="post">
                             <div class="header">
                                 <div class="row clearfix">
                                     <div class="col-xs-12 col-sm-6">
-                                         <div class="switch panel-switch-btn" style="margin-left: 30px">
+                                        <div class="switch panel-switch-btn" style="margin-left: 30px">
                                             <div id="switch" style="display: none"><?php echo $tax_type; ?></div>
                                             <span class="m-r-10 font-12">REVERSE TAXATION</span>
                                             <label>OFF<input type="checkbox" id="realtime" checked><span class="lever switch-col-cyan"></span>ON</label>
                                         </div>
                                     </div>
-                                    <div class="col-xs-3 col-xs-offset-3 align-right">
+                                    <div class="col-xs-3 col-xs-offset-3 align-right sack">
                                         <input type="text" name="search" id="search" placeholder="Search">
+                                        <button id="search-btn" class="btn btn-info">Search</button>
                                     </div>  
                                     </div>
                                     </div>  
@@ -183,7 +187,6 @@
                                     
                                 </div>
                             </div>
-                        </form>
                      </div>
             </div>
             </div>
@@ -197,7 +200,7 @@
 
         $(document).ready(function() 
         {
-            $("#search").keyup(function()
+            $("#search-btn").click(function()
             {
                 var search= $("#search").val();
                 if(search.length==0)
@@ -398,6 +401,20 @@ $('.grpprice').keypress(function(event) {
 $(document).ready(function()
     {
         $('#left_product').addClass('active');
+    });
+
+    $(document).ready(function()
+    {
+        $.ajax({
+            type: 'POST',
+            url: '../sql/check_last_sync.php',
+            data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+            cache: false,
+            success: function(data)
+            {
+                showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+            }
+        });
     });
 
 </script>

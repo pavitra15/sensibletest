@@ -24,25 +24,25 @@
 
     $status='active';
 
-     $product_query=$db->prepare("select sum(bill_amt) as total, sum(tax_amt) as total_tax, sum(cash) as total_cash, sum(credit) as total_credit, sum(digital) as total_digital from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+     $product_query=$db->prepare("select sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount,parcel_amt+bill_amt-discount)) as total, sum(tax_amt) as total_tax, sum(cash) as total_cash, sum(credit) as total_credit, sum(digital) as total_digital, sum(discount) as total_discount, sum(round_off) as total_round_off from( Select DISTINCT bill_no, tax_state, bill_amt, tax_amt, cash, credit, digital, discount, parcel_amt, round_off from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date')T1");
+
     $product_query->execute();
     if($data=$product_query->fetch())
     {
         do
         {
             $bill_total=$data['total'];
+            $bill_round_off=$data['total_round_off'];
             $cgst=$data['total_tax']/2;
-            $total_amt=$data['total']+$data['total_tax'];
+            // $total_amt=$data['total']+$data['total_tax'];
         }
         while($data=$product_query->fetch());
     }
 
-
-    $product_query=$db->prepare("select transaction_id, bill_no, bill_amt, bill_date from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+    $product_query=$db->prepare("select DISTINCT bill_no, bill_amt, bill_date from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
 
     $product_query->execute();
     $total_records=$product_query->rowCount();  
-
 
     $total_pages = ceil($total_records / $limit);
     $total_pagess = ceil($total_records / 50);
@@ -58,7 +58,7 @@
 
     $start_from = ($page-1) * $limit;
 
-    $Product_query=$db->prepare("select transaction_id, bill_no, bill_amt, bill_date from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' LIMIT $start_from, $limit");  
+    $Product_query=$db->prepare("select DISTINCT bill_no, bill_amt, tax_state, discount, parcel_amt, tax_amt,parcel_amt, bill_date from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' LIMIT $start_from, $limit");  
     $Product_query->execute();
     ?>
     <!DOCTYPE html>
@@ -81,7 +81,10 @@
                     <tr>  
                         <th>Bill No</th>
                         <th>Amount</th>
-                        <th>Date and Time</th>
+                        <th>Tax</th>
+                        <th>Discount</th>
+                        <th>Net</th>
+                        <th>Date</th>
                         <th>Name</th>
                         <th>Quantity</th>
                         <th>Price</th>
@@ -91,14 +94,32 @@
                 <tbody id="target-content">';
                     while ($row = $Product_query->fetch()) 
                     {
-                        $transaction_id=$row['transaction_id'];
-                        $count_query=$db->prepare("select english_name, quantity, price, total_amt, transaction_dtl.status from transaction_dtl, product where transaction_dtl.transaction_id='$transaction_id' and product.product_id=transaction_dtl.item_id");
+                        $bill_no=$row['bill_no'];
+                        $trans_query=$db->prepare("select transaction_id from transaction_mst where transaction_mst.device_id='$d_id' and bill_no='$bill_no'");
+                        $trans_query->execute();
+                        while($trans_data=$trans_query->fetch())
+                        {
+                            $transaction_id=$trans_data['transaction_id'];
+                        }
+
+                        $count_query=$db->prepare("select DISTINCT item_name as english_name, quantity, price, total_amt, transaction_dtl.status from transaction_dtl where transaction_dtl.transaction_id='$transaction_id'");
                         $count_query->execute();
                         $cnt=$count_query->rowCount();
                         echo'<tr>  
                             <td rowspan="'.$cnt.'">'.$row['bill_no'].'</td>
-                            <td rowspan="'.$cnt.'">'.$row["bill_amt"].'</td>  
-                            <td rowspan="'.$cnt.'">'.$row["bill_date"].'</td> '; 
+                            <td rowspan="'.$cnt.'">'.round($row["bill_amt"]).'</td>  
+                            <td rowspan="'.$cnt.'">'.$row["tax_amt"].'</td> 
+                            <td rowspan="'.$cnt.'">'.$row["discount"].'</td>';
+                            echo'<td rowspan="'.$cnt.'">';
+                            if($row["tax_state"]==0)
+                            {
+                                echo round($row["parcel_amt"]+$row["tax_amt"]+$row["bill_amt"]-$row["discount"]);
+                            }
+                            else
+                            {
+                               echo round($row["parcel_amt"]+$row["bill_amt"]-$row["discount"]);
+                            }
+                            echo'</td><td rowspan="'.$cnt.'">'.$row["bill_date"].'</td> '; 
                                 
                             while ($row_cnt = $count_query->fetch()) 
                             {
@@ -247,7 +268,7 @@
                                 tempData.push(sk.data[i]);
                             }
                             // console.log(tempData);
-                            if(next<aNum)
+                            if(next<=aNum)
                             {
                                 recursiveAjaxCall(aNum,next);
                             }
@@ -276,7 +297,7 @@
                 border: "none,none,none,thin #333333"}); 
             
     
-            var headers=["Sr.No","Bill No","Bill Amount","Bill Date","English Name","Quantity", "Price", "Total Amount"];
+            var headers=["Sr.No","Bill No","Amount","Tax","Discount","Parcel Amount","Net","Bill Date","English Name","Quantity", "Price", "Total Amount"];
 
             var formatHeader=excel.addStyle ( {                                                             
                     border: "thin #333333,thin #333333,thin #333333,thin #333333",                                                  
@@ -297,7 +318,7 @@
                      excel.set(0,2,3,"<?php echo $serial_no; ?>");
 
                     excel.set(0,1,4,"Bill Amount",excel.addStyle({font: "Calibri 13 #333333 B"}));                                                      //      
-                    excel.set(0,2,4,"<?php echo $bill_total; ?>");
+                    excel.set(0,2,4,"<?php echo $bill_total+$bill_round_off; ?>");
 
                     excel.set(0,1,5,"CGST",excel.addStyle({font: "Calibri 13 #333333 B"}));                                                      //      
                     excel.set(0,2,5,"<?php echo $cgst; ?>");
@@ -305,8 +326,8 @@
                     excel.set(0,1,6,"SGST",excel.addStyle({font: "Calibri 13 #333333 B"}));                                                      //      
                     excel.set(0,2,6,"<?php echo $cgst; ?>");
 
-                    excel.set(0,1,7,"Total Amount",excel.addStyle({font: "Calibri 13 #333333 B"}));                                                      //      
-                    excel.set(0,2,7,"<?php echo $total_amt; ?>");
+                    // excel.set(0,1,7,"Total Amount",excel.addStyle({font: "Calibri 13 #333333 B"}));                                                      //      
+                    // excel.set(0,2,7,"<?php //echo $total_amt; ?>");
 
 
             for (var i=0;i<headers.length;i++){                                                             // Loop all the haders
@@ -324,15 +345,19 @@
                     excel.set(0,0,n,k,excel.addStyle( {align:"L", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
                     excel.set(0,1,n,counter.bill_no,excel.addStyle( {align:"L", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
                     excel.set(0,2,n,counter.bill_amt,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
-                    excel.set(0,3,n,counter.bill_date,excel.addStyle( {align:"L", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                    excel.set(0,3,n,counter.tax_amt,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                    excel.set(0,4,n,counter.discount,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                    excel.set(0,5,n,counter.parcel_amt,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                    excel.set(0,6,n,counter.net,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                    excel.set(0,7,n,counter.bill_date,excel.addStyle( {align:"L", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
 
                     for (var m =0; m < counter.details.length; m++) 
                     {
 
-                        excel.set(0,4,n,counter.details[m].english_name,excel.addStyle( {align:"L", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
-                        excel.set(0,5,n,counter.details[m].quantity,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
-                        excel.set(0,6,n,counter.details[m].price,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
-                        excel.set(0,7,n,counter.details[m].total_amt,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                        excel.set(0,8,n,counter.details[m].english_name,excel.addStyle( {align:"L", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                        excel.set(0,9,n,counter.details[m].quantity,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                        excel.set(0,10,n,counter.details[m].price,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
+                        excel.set(0,11,n,counter.details[m].total_amt,excel.addStyle( {align:"R", border: "thin #333333,thin #333333,thin #333333,thin #333333"}));
                         n++;
                     }
                     j++;
@@ -343,10 +368,14 @@
                  excel.set(0,1,undefined,15);
                  excel.set(0,2,undefined,10);
                  excel.set(0,3,undefined,20);
-                 excel.set(0,4,undefined,15);
-                 excel.set(0,5,undefined,10);
-                 excel.set(0,6,undefined,10);
-                 excel.set(0,7,undefined,15);  
+                 excel.set(0,4,undefined,20);
+                 excel.set(0,5,undefined,20);
+                 excel.set(0,6,undefined,20);
+                 excel.set(0,7,undefined,20);
+                 excel.set(0,8,undefined,15);
+                 excel.set(0,9,undefined,10);
+                 excel.set(0,10,undefined,10);
+                 excel.set(0,11,undefined,15);  
                                                                            // Set COLUMN 3 to 20 chars width
             excel.generate("Bill_Report.xlsx");
             

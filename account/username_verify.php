@@ -28,7 +28,9 @@
     {
         echo "Something goes wrong";
     }
-    function is_ajax() {
+    //verify request
+    function is_ajax() 
+    {
         return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
     }
 ?>

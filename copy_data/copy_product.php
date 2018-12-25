@@ -203,7 +203,7 @@
                                         }
                                         echo'<div class="form-group form-float"><div class="form-line"><label class="form-label">COPY FROM</label><br>';
                                             echo'<select class="form-control from_name show-tick" data-live-search="true">';
-                                                $query=$db->prepare("select * from device where id='$id' and device_type='$device_type' and d_id !='$d_id'");
+                                                $query=$db->prepare("select * from device where id='$id' and device_type='$device_type' and d_id !='$d_id' and status='$status'");
                                                 $query->execute();
                                                 if($data=$query->fetch())
                                                 {

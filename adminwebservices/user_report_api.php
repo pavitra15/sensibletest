@@ -25,11 +25,11 @@
     $token_count=$query->rowCount();
     if($token_count==1)
     {
-        $query=$db->prepare("select sum(bill_amt) as total, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' group by user_name");
+        $query=$db->prepare("select sum(bill_amt) as total, user_name from( select distinct bill_no, bill_amt, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date') T1 group by user_name");
         $query->execute();
         $summary_data=$query->fetchAll(PDO::FETCH_ASSOC);
         
-        $product_query=$db->prepare("select transaction_id, bill_no, bill_amt, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+        $product_query=$db->prepare("select transaction_id, distinct bill_no, bill_amt, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
         $product_query->execute();
         $detail_data=$product_query->fetchAll(PDO::FETCH_ASSOC);
         $data_array = array('status' =>1 ,'bill_summary'=>$summary_data,'bill_data'=>$detail_data);

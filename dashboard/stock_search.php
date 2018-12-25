@@ -102,7 +102,7 @@ only screen and (max-width: 760px),
                     <option>Yes</option>
                     <option>No</option>
                 </select></td>
-                <td><input type="text" class="grpprice" id="new_stock'.$data['stock_id'].'" value="0"></td>';
+                <td><input type="text" class="grpprice" id="new_stock'.$data['stock_id'].'" value="0" disabled></td>';
             ?>
                 <script type="text/javascript">
                     var id=<?php echo $data['stock_id'];?>;
@@ -145,10 +145,13 @@ var unit=$("#unit"+ID).val();
 if(stockable=="Yes")
 {
     $("#new_stock"+ID).prop('disabled', false);
+    $("#reorder_level"+ID).prop('disabled',false);
 }
 else
 {
      $("#new_stock"+ID).prop('disabled', true);
+     $("#reorder_level"+ID).prop('disabled',true);
+     $("#reorder_level"+ID).val(0);
 }
 if(new_stock=='')
 {
@@ -159,9 +162,10 @@ if(stockable.length>0 && unit.length>0)
     var addition=parseFloat(current_stock)+parseFloat(new_stock);
     $("#current_stock"+ID).html(addition);
 }
+var reorder_level=$("#reorder_level"+ID).val();
 
-var dataString = 'stock_id='+ ID +'&stockable='+stockable+'&current_stock='+addition+'&unit='+unit+'&id='+<?php echo $_SESSION['login_id']; ?>;
-if(unit.length>0 && stockable.length>0)
+var dataString = 'stock_id='+ ID +'&stockable='+stockable+'&reorder_level='+reorder_level+'&current_stock='+addition+'&new_stock='+new_stock+'&unit='+unit+'&id='+<?php echo $_SESSION['login_id']; ?>+'&d_id='+<?php echo $_SESSION['d_id']; ?>;
+if(unit.length>0 && stockable.length>0 && reorder_level.length>0)
 {
 
 $.ajax({
@@ -171,6 +175,7 @@ data: dataString,
 cache: false,
 success: function(data)
 {
+    console.log(data);
     values=data.split('_');
     ch=values[0];
     name=values[1];

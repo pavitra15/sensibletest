@@ -183,6 +183,10 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="summary-display" style="display: none">
+                    
+                            </div>
+
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="data-display" style="display: none">
                     
                             </div>
@@ -197,21 +201,22 @@
 
         $(document).ready(function() {         
             $('#generate').click(function(){
-                $('#data-display').show();
                  $('.page-loader-wrapper').show();
+                $('#summary-display').show();
+                $('#data-display').hide();
                 var start_date=$('#start_date').val();
                 var end_date=$('#end_date').val();
                 if(start_date.length>0 && end_date.length>0)
                 {
                     $.ajax({
                         type: 'POST',
-                        url: 'product_data.php',
-                        data: { "start_date":start_date,"end_date":end_date,'page':1 },
+                        url: 'product_summary.php',
+                        data: { "start_date":start_date,"end_date":end_date},
                         cache: false,
                         success: function(data)
                         {
                              $('.page-loader-wrapper').hide();
-                            $('#data-display').html(data);
+                            $('#summary-display').html(data);
                         }
                     });
                 }
@@ -222,6 +227,35 @@
                 }
             } );
         });
+
+
+        // $(document).ready(function() {         
+        //     $('#generate').click(function(){
+        //         $('#data-display').show();
+        //          $('.page-loader-wrapper').show();
+        //         var start_date=$('#start_date').val();
+        //         var end_date=$('#end_date').val();
+        //         if(start_date.length>0 && end_date.length>0)
+        //         {
+        //             $.ajax({
+        //                 type: 'POST',
+        //                 url: 'product_data.php',
+        //                 data: { "start_date":start_date,"end_date":end_date,'page':1 },
+        //                 cache: false,
+        //                 success: function(data)
+        //                 {
+        //                      $('.page-loader-wrapper').hide();
+        //                     $('#data-display').html(data);
+        //                 }
+        //             });
+        //         }
+        //         else
+        //         {
+        //             alert("please select date");
+        //             $('.page-loader-wrapper').hide();
+        //         }
+        //     } );
+        // });
                 </script>
             </div>
         </div>
@@ -241,8 +275,23 @@
         {
             $('#left_report').addClass('active');
         });
-    </script>
 
+        $(document).ready(function()
+        {
+            $.ajax({
+                type: 'POST',
+                url: '../sql/check_last_sync.php',
+                data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+                cache: false,
+                success: function(data)
+                {
+                    showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+                }
+            });
+        });
+    </script>
+    <script src="../plugins/bootstrap-notify/bootstrap-notify.js"></script>
+    <script src="../js/pages/ui/notifications.js"></script>
     <script src="../plugins/momentjs/moment.js"></script>
     <script src="../js/change_device.js"></script>
     <script src="../js/avatar.js"></script>

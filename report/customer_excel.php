@@ -25,7 +25,7 @@
             $customer_id=$data['customer_id'];
             $response.='{"customer_name":"'.$data['customer_name'].'","mobile":"'.$data['customer_contact'].'","detail":[';
 
-            $count_query=$db->prepare("select bill_no, bill_date, bill_amt, cash, credit, digital from transaction_mst where transaction_mst.customer_id='$customer_id'");
+            $count_query=$db->prepare("select DISTINCT bill_no, bill_date, bill_amt, cash, credit, digital from transaction_mst where transaction_mst.customer_id='$customer_id'");
             $count_query->execute();
             if($row_cnt = $count_query->fetch())
             {

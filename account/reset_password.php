@@ -10,6 +10,7 @@
         $clone= clone $date;
         $current_date=$clone->format( 'Y-m-d' ); 
         $key='123acd1245120954';
+        //password in encrypt formatt
         $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
         $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
         $password = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));

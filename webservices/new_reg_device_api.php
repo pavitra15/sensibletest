@@ -137,7 +137,7 @@
                                 setHtml($message);
                             $mailin->send();
 
-                            $device_query=$db->prepare("select d_id, deviceid, serial_no, device_name, language_id, device_type, tax_type from device where deviceid='$deviceid'");
+                            $device_query=$db->prepare("select d_id, deviceid, serial_no, device_name, language_id, device_type, tax_type from device where deviceid='$deviceid' and status='active'");
                             $device_query->execute();
                             $responce.='{"status":5,"device":{';
                             if($device_data=$device_query->fetch())

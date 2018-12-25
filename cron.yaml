@@ -2,10 +2,53 @@ cron:
 - description: daily summary report
   url: /mail_report/daily_mail_report.php?page=1
   target: beta
-  schedule: every day 22:50
+  schedule: every day 21:50
   timezone: Asia/Kolkata
+
 - description: daily summary report
   url: /mail_report/daily_mail_report.php?page=2
   target: beta
+  schedule: every day 22:50
+  timezone: Asia/Kolkata
+
+- description: daily summary report
+  url: /mail_report/daily_mail_report.php?page=3
+  target: beta
   schedule: every day 23:05
+  timezone: Asia/Kolkata
+
+- description: weekly summary report
+  url: /mail_report/weekly_mail_report.php?page=1
+  target: beta
+  schedule: every monday 09:05
+  timezone: Asia/Kolkata
+
+- description: weekly summary report
+  url: /mail_report/weekly_mail_report.php?page=2
+  target: beta
+  schedule: every monday 07:50
+  timezone: Asia/Kolkata
+
+- description: weekly summary report
+  url: /mail_report/weekly_mail_report.php?page=3
+  target: beta
+  schedule: every monday 08:05
+  timezone: Asia/Kolkata
+
+- description: monthly summary report
+  url: /mail_report/monthly_mail_report.php?page=1
+  target: beta
+  schedule: 1 of month 05:50
+  timezone: Asia/Kolkata
+
+- description: monthly summary report
+  url: /mail_report/monthly_mail_report.php?page=2
+  target: beta
+  schedule: 1 of month 06:05
+  timezone: Asia/Kolkata
+
+- description: monthly summary report
+  url: /mail_report/monthly_mail_report.php?page=3
+  target: beta
+  schedule: 1 of month 04:50
   timezone: Asia/Kolkata

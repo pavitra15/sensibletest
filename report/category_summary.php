@@ -15,7 +15,7 @@ session_start();
     $d_id=$_SESSION['d_id'];
 
     $status='active';
-    $product_query=$db->prepare("select sum(total_amt) as total, category_name from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' group by category_name");
+    $product_query=$db->prepare("select sum(total_amt) as total, category_name from( select DISTINCT bill_no, total_amt, category_name from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date') T1 group by category_name");
     $product_query->execute();
     if($data=$product_query->fetch())
     {
@@ -33,19 +33,21 @@ session_start();
                     echo $report_date_second;
                 echo'</div>      
             </div>';
+            echo'<div class="row">
+                    <div class="col-sm-6">
+                    <strong>Category Name</strong>   
+                    </div>
+                    <div class="col-sm-6">
+                        <strong>Category Total</strong>
+                    </div>      
+            </div>';
             do
             {
                 echo'<div class="row">
-                    <div class="col-sm-2">
-                        <strong>Category Name : </strong>
-                    </div>
-                <div class="col-sm-4">';
-                    echo $data['category_name'];
+                    <div class="col-sm-6">';
+                        echo $data['category_name'];
                 echo'</div>
-                <div class="col-sm-2">
-                   <strong>Total Amount : </strong> 
-                </div>
-                <div class="col-sm-4">';
+                <div class="col-sm-6">';
                     echo $data['total'];
                 echo'</div>      
             </div>';

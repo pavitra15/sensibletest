@@ -22,9 +22,7 @@ a.disabled {
     $d_id=$_SESSION['d_id'];
 
     $status='active';
-    $count_query=$db->prepare("select english_name,regional_name, sum(transaction_dtl.quantity) AS total, sum(transaction_dtl.total_amt) as total_amt from product, transaction_dtl,transaction_mst where transaction_dtl.transaction_id=transaction_mst.transaction_id and product.product_id=transaction_dtl.item_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'  and transaction_dtl.status='active' group by (product.product_id)");
-
-    $query="select english_name,regional_name, sum(transaction_dtl.quantity) AS total, sum(transaction_dtl.total_amt) as total_amt from product, transaction_dtl,transaction_mst where transaction_dtl.transaction_id=transaction_mst.transaction_id and product.product_id=transaction_dtl.item_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'  and transaction_dtl.status='active' group by (product.product_id)";
+    $count_query=$db->prepare("select english_name,regional_name, sum(quantity) AS total, sum(total_amt) as total_amt from(select DISTINCT bill_no, product.product_id, english_name, regional_name,transaction_dtl.quantity, transaction_dtl.total_amt  from product, transaction_dtl,transaction_mst where transaction_dtl.transaction_id=transaction_mst.transaction_id and product.product_id=transaction_dtl.item_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'  and transaction_dtl.status='active')T1  group by (product_id)");
 
     $count_query->execute();
     $total_records=$count_query->rowCount();    
@@ -42,7 +40,7 @@ a.disabled {
 
     $start_from = ($page-1) * $limit;
 
-    $sql_query = $db->prepare("select english_name,regional_name, sum(transaction_dtl.quantity) AS total, sum(transaction_dtl.total_amt) as total_amt from product, transaction_dtl,transaction_mst where transaction_dtl.transaction_id=transaction_mst.transaction_id and product.product_id=transaction_dtl.item_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'  and transaction_dtl.status='active' group by (product.product_id) LIMIT $start_from, $limit");  
+    $sql_query = $db->prepare("select english_name,regional_name, sum(quantity) AS total, sum(total_amt) as total_amt from( select DISTINCT bill_no, product.product_id, english_name, regional_name,transaction_dtl.quantity,transaction_dtl.total_amt from product, transaction_dtl,transaction_mst where transaction_dtl.transaction_id=transaction_mst.transaction_id and product.product_id=transaction_dtl.item_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'  and transaction_dtl.status='active') T1 group by (product_id) LIMIT $start_from, $limit");  
     $sql_query->execute();
     ?>
     <!DOCTYPE html>

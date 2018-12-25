@@ -29,7 +29,6 @@
 	    	data: {page_no: currentNum},
 	    	success: function(ks)
 	    	{
-	    		alert("sa");
 	    		alert(ks);
 	    		console.log(ks);
 	        	if(ks<aNum)
@@ -45,3 +44,5 @@
 	  	});
 	}
 </script>
+
+UPDATE transaction_dtl INNER JOIN product ON transaction_dtl.item_id = product.product_id SET transaction_dtl.item_name = product.english_name WHERE transaction_dtl.item_id = product.product_id and transaction_dtl.item_name is null

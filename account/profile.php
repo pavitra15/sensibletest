@@ -1,5 +1,6 @@
 <?php
     session_start();
+    //to verify user acc type
     include('../validate.php');     
 ?>
 <?php
@@ -8,12 +9,14 @@
     if(isset($_POST['update']))
     {
         $id=$_SESSION['login_id'];
+        //convert words into Upper Char
         $first_name=ucwords($_POST['first_name']);
         $last_name=ucwords($_POST['last_name']);
         $email=$_POST['email'];
         $city=ucwords($_POST['city']);
         $state=$_POST['state'];
         $pin=$_POST['pin'];
+        //to verify inserted email correct ot not
         if(!filter_var($email, FILTER_VALIDATE_EMAIL))
         {
         	$flag=4;

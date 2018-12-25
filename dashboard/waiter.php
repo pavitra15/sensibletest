@@ -502,6 +502,19 @@ $(document).ready(function() {
         $('#left_application').addClass('active');
     });
 
+    $(document).ready(function()
+    {
+        $.ajax({
+            type: 'POST',
+            url: '../sql/check_last_sync.php',
+            data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+            cache: false,
+            success: function(data)
+            {
+                showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+            }
+        });
+    });
 </script>
     <script src="../js/change_device.js"></script>
     <script src="../js/avatar.js"></script>

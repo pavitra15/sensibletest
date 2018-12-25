@@ -1,5 +1,5 @@
 <?php
-	include('../connect.php');
+    include('../connect.php');
 
     $id=$_POST['id'];
     $first_date =  new DateTime($_POST['start_date']);
@@ -17,7 +17,8 @@
     $checkout=0;
     $device_name="";
     $status='active';
-    $checkout_query=$db->prepare("select sum(bill_amt) as total, count(bill_no) as count from transaction_mst, device where transaction_mst.device_id=device.d_id and transaction_mst.status='$status' and device.id='$id' and bill_date between '$start_date' and '$end_date'");
+    $checkout_query=$db->prepare("select sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount+round_off,parcel_amt+bill_amt-discount+round_off)) as total, count(bill_no) as count from ( select distinct bill_no, tax_state,tax_amt, parcel_amt, bill_amt, discount, round_off from device, transaction_mst where transaction_mst.device_id=device.d_id and transaction_mst.status='$status' and device.id='$id'  and device.status='$status' and bill_date between '$start_date' and '$end_date')T1");
+    
     $checkout_query->execute();
     while($data=$checkout_query->fetch())
     {
@@ -28,13 +29,17 @@
     {
         $checkout=$total/$count;
     }
-    $top_query=$db->prepare("select english_name, sum(transaction_dtl.quantity) as count from transaction_dtl,product, transaction_mst, device where transaction_dtl.item_id=product.product_id and transaction_mst.device_id=device.d_id and transaction_dtl.transaction_id=transaction_mst.transaction_id  and transaction_mst.status='$status' and device.id='$id' and bill_date between '$start_date' and '$end_date' group by item_id Order by sum(transaction_dtl.quantity) desc limit 1");
+
+    $top_query=$db->prepare("select english_name, sum(quantity) as count from ( select distinct bill_no, english_name, transaction_dtl.quantity, item_id from transaction_dtl,product, transaction_mst, device where transaction_dtl.item_id=product.product_id and transaction_mst.device_id=device.d_id and transaction_dtl.transaction_id=transaction_mst.transaction_id  and transaction_mst.status='$status' and device.id='$id'  and device.status='$status' and bill_date between '$start_date' and '$end_date')T1 group by item_id Order by sum(quantity) desc limit 1");
+
     $top_query->execute();
     while($data_top=$top_query->fetch())
     {
         $name=$data_top['english_name'];
     }
-    $user_query=$db->prepare("select device_name, count(transaction_mst.device_id) as count from device, transaction_mst where transaction_mst.device_id=device.d_id and device.id='$id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' group by transaction_mst.device_id Order by count(transaction_mst.device_id) desc limit 1");
+
+    $user_query=$db->prepare("select device_name from (select distinct bill_no,device_name, tax_state, tax_amt, bill_amt, parcel_amt, discount, transaction_mst.device_id  from device, transaction_mst where transaction_mst.device_id=device.d_id and device.id='$id'  and device.status='$status' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date') T1 group by device_id Order by sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount,parcel_amt+bill_amt-discount)) desc limit 1");
+
     $user_query->execute();
     while($data=$user_query->fetch())
     {
@@ -103,7 +108,7 @@
             </div>
 
 <div class="row clearfix">
-	<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+    <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
         <div class="card">
             <div class="header">
                         <h2>DEVICE WISE SALE REPORT</h2>
@@ -113,7 +118,7 @@
                         
                         $cat="[
                             ['Device', 'Sale']";          
-                            $category_query=$db->prepare("select d_id, device_name, sum(transaction_mst.bill_amt) as total from device, transaction_mst where transaction_mst.device_id=device.d_id and  device.id='$id' and bill_date between '$start_date' and '$end_date' group by(device.d_id) ");
+                            $category_query=$db->prepare("select d_id, device_name, sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount+round_off,parcel_amt+bill_amt-discount+round_off)) as total from( select distinct bill_no, d_id, device_name, tax_state, tax_amt, parcel_amt, bill_amt, discount, round_off from device, transaction_mst where transaction_mst.device_id=device.d_id and  device.id='$id'  and device.status='active' and bill_date between '$start_date' and '$end_date' and transaction_mst.status='active') T1 group by(d_id) ");
                             $category_query->execute();
                             while ($category_data=$category_query->fetch()) 
                             {   

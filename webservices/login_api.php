@@ -36,7 +36,23 @@
             	do
 	            {
 	            	$id=$data['id'];
-	            	$responce.='"user":{"id":'.$data['id'].',"first_name":"'.$data['first_name'].'","last_name":"'.$data['last_name'].'","mobile":'.$data['mobile'].',"email":"'.$data['email'].'","state":'.$data['state'].',"city":"'.$data['city'].'","pincode":'.$data['pincode'].'},';
+                    if($data['state']=="")
+                    {
+                        $state=0;
+                    }
+                    else
+                    {
+                        $state=$data['state'];
+                    }
+                    if($data['pincode']=="")
+                    {
+                        $pincode=0;
+                    }
+                    else
+                    {
+                        $pincode=$data['pincode'];
+                    }
+	            	$responce.='"user":{"id":'.$data['id'].',"first_name":"'.$data['first_name'].'","last_name":"'.$data['last_name'].'","mobile":'.$data['mobile'].',"email":"'.$data['email'].'","state":'.$state.',"city":"'.$data['city'].'","pincode":'.$pincode.'},';
 	            }
 	            while ($data=$select_query->fetch());
         	}

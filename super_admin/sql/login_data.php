@@ -88,7 +88,7 @@ only screen and (max-width: 760px),
                     $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
                     $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
                     $decode_password = trim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $pass, MCRYPT_MODE_ECB, $iv));
-                    echo'<tr>
+                    echo'<tr id='.$data['id'].'>
                         <td>'.$data['first_name'].' '.$data['last_name'].'</td>
                         <td>'.$data['username'].'</td>
                         <td>'.$decode_password.'</td>

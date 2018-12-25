@@ -22,7 +22,7 @@
     $d_id=$_SESSION['d_id'];
 
     $status='active';
-    $product_query=$db->prepare("select english_name, category_name, sum(total_amt) as total from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' group by product.product_id");
+    $product_query=$db->prepare("select english_name, category_name, sum(total_amt) as total from(select DISTINCT bill_no, product.product_id, english_name, category_name, total_amt from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date') T1 group by product_id");
     $product_query->execute();
     $total_records=$product_query->rowCount();  
 
@@ -40,7 +40,7 @@
 
     $start_from = ($page-1) * $limit;
 
-    $Product_query=$db->prepare("select english_name, category_name, sum(total_amt) as total, product.category_id  from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' group by product.product_id order by product.category_id LIMIT $start_from, $limit ");  
+    $Product_query=$db->prepare("select english_name, category_name, sum(total_amt) as total, category_id from( select DISTINCT bill_no, product.product_id, english_name, category_name, total_amt, product.category_id  from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date') T1 group by product_id order by category_id LIMIT $start_from, $limit ");  
     $Product_query->execute();
     ?>
     <!DOCTYPE html>

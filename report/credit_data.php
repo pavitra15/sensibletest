@@ -16,7 +16,7 @@ a.disabled {
     $d_id=$_SESSION['d_id'];
 
     $status='active';
-    $count_query=$db->prepare("select customer_name,customer_contact, sum(credit) AS total from customer_mst, transaction_mst where customer_mst.customer_id=transaction_mst.customer_id and transaction_mst.status='$status' and customer_mst.deviceid='$d_id' group by (customer_mst.customer_id)");
+    $count_query=$db->prepare("select customer_name,customer_contact, sum(credit) AS total from( select DISTINCT bill_no, customer_id, customer_name, customer_contact, credit from customer_mst, transaction_mst where customer_mst.customer_id=transaction_mst.customer_id and transaction_mst.status='$status' and customer_mst.deviceid='$d_id') T1 group by (customer_id)");
     $count_query->execute();
     $total_records=$count_query->rowCount();    
 
@@ -33,7 +33,7 @@ a.disabled {
 
     $start_from = ($page-1) * $limit;
 
-    $sql_query = $db->prepare("select customer_name,customer_contact, sum(credit) AS total from customer_mst, transaction_mst where customer_mst.customer_id=transaction_mst.customer_id and transaction_mst.status='$status' and customer_mst.deviceid='$d_id' group by (customer_mst.customer_id) LIMIT $start_from, $limit");  
+    $sql_query = $db->prepare("select customer_name,customer_contact, sum(credit) AS total from( select DISTINCT bill_no, customer_id, customer_name, customer_contact, credit from customer_mst, transaction_mst where customer_mst.customer_id=transaction_mst.customer_id and transaction_mst.status='$status' and customer_mst.deviceid='$d_id')T1 group by (customer_id) LIMIT $start_from, $limit");  
     $sql_query->execute();
     ?>
     <!DOCTYPE html>

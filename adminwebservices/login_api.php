@@ -1,9 +1,9 @@
 <?php
-	include('../connect.php');
-	$username=$_POST['username'];
-	$pass=$_POST['password'];
-	$deviceid=$_POST['deviceid'];
-	$status="active";
+    include('../connect.php');
+    $username=$_POST['username'];
+    $pass=$_POST['password'];
+    $deviceid=$_POST['deviceid'];
+    $status="active";
     $type="user";
     $key='123acd1245120954';
     $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
@@ -14,7 +14,7 @@
     $count=$query->rowCount();
     if ($count==1)
     {
-    	$select_query=$db->prepare("select login_mst.id, first_name, last_name, mobile, email, state, city, pincode from login_mst, user_mst where user_mst.id=login_mst.id and username='$username' and password='$password' and status='$status' and access_control='$status' and type='$type'");
+        $select_query=$db->prepare("select login_mst.id, first_name, last_name, mobile, email, state, city, pincode from login_mst, user_mst where user_mst.id=login_mst.id and username='$username' and password='$password' and status='$status' and access_control='$status' and type='$type'");
         $select_query->execute();
         $count=$select_query->rowCount();
         if($count==1)
@@ -25,24 +25,25 @@
             $status='active';
             $token=md5(uniqid(mt_rand(),true));
             if($data=$select_query->fetch())
-        	{
-        		$id=$data['id'];
-        		$query=$db->prepare("insert into mobile_token_verify(deviceid,token, status, created_by_id, created_by_date)values('$deviceid','$token','$status','$id','$visit_date')");
-        		$select_query->execute();
+            {
+                $id=$data['id'];
+                $query=$db->prepare("insert into mobile_token_verify(deviceid,token, status, created_by_id, created_by_date)values('$deviceid','$token','$status','$id','$visit_date')");
+                $select_query->execute();
                 $query->execute();
                 $login_data=$select_query->fetchAll(PDO::FETCH_ASSOC);
             }
 
-        	$device_query=$db->prepare("select d_id, deviceid, serial_no, device_name, language_id, device_type, tax_type from device where id='$id'");
+            $device_query=$db->prepare("select d_id, deviceid, serial_no, device_name, language_id, device_type, tax_type from device where id='$id' and status='$status'");
             $device_query->execute();
             $device_data=$device_query->fetchAll(PDO::FETCH_ASSOC);
-        	$responce = array('status' =>1 ,'token' =>$token ,'login_info' =>$login_data,'device_info' =>$device_data);   
-            echo json_encode($responce,	JSON_NUMERIC_CHECK);
+            $responce = array('status' =>1 ,'token' =>$token ,'login_info' =>$login_data,'device_info' =>$device_data);  
+            echo json_encode($responce);
+            // echo json_encode($responce, JSON_NUMERIC_CHECK);
         }
         else
         {
             $responce = array('status' =>2,'message'=>"please contact to customer support, access denied");
-			echo json_encode($responce);
+            echo json_encode($responce);
         }
     }
     else
@@ -104,6 +105,15 @@
                     echo json_encode($responce);
                 }
             }
+            else
+            {
+                echo "fail";
+            }
+        }
+        else
+        {
+            $responce = array('status' =>5,'message'=>"invalid username or password");
+            echo json_encode($responce);
         }
     }
 ?>

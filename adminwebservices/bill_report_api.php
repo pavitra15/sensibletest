@@ -28,7 +28,7 @@
         $query=$db->prepare("select sum(bill_amt) as total, sum(tax_amt) as total_tax, sum(cash) as total_cash, sum(credit) as total_credit, sum(digital) as total_digital from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
         $query->execute();
         $summary_data=$query->fetchAll(PDO::FETCH_ASSOC);
-        $product_query=$db->prepare("select transaction_id, bill_no, bill_amt, bill_date from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+        $product_query=$db->prepare("select transaction_id, bill_no, bill_amt,tax_amt, bill_date, tax_state, discount, parcel_amt from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
         $product_query->execute();
         $arr=array();
         if($data=$product_query->fetch(PDO::FETCH_ASSOC))
@@ -36,7 +36,7 @@
             do
             {
                 $transaction_id=$data['transaction_id'];
-                $count_query=$db->prepare("select english_name, quantity, price, total_amt from transaction_dtl, product where transaction_dtl.transaction_id='$transaction_id' and product.product_id=transaction_dtl.item_id");
+                $count_query=$db->prepare("select item_name as english_name, quantity, price, total_amt from transaction_dtl where transaction_dtl.transaction_id='$transaction_id'");
                 $count_query->execute();
                 $count_data=$count_query->fetchAll(PDO::FETCH_ASSOC);
                 array_push($data,$count_data);

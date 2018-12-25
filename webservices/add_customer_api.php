@@ -56,8 +56,17 @@
 				$contact=$records[$i]->contact;
 				$gstn=$records[$i]->gstn;
 				$extra=$records[$i]->extra;
+				//new Fields
+				$dob=$records[$i]->dob;
+				$doa=$records[$i]->doa;
+				$date1=$records[$i]->date1;
+				$date2=$records[$i]->date2;
+				$credit_limit=$records[$i]->credit_limit;
+				$credit_enable=$records[$i]->credit_enable;
+				$old_balance=$records[$i]->old_balance;
+				$day_limit=$records[$i]->day_limit;
 
-				 $query=$db->prepare("insert into customer_mst(customer_name, customer_contact, customer_gstn, customer_extra, deviceid, created_by_id,   created_by_date, status) values('$name', '$contact', '$gstn', '$extra', '$d_id', '$id', '$created_by_date', '$status' )");
+				 $query=$db->prepare("insert into customer_mst(customer_name, customer_contact, customer_gstn, customer_extra, deviceid, created_by_id,   created_by_date, status) values('$name', '$contact', '$gstn', '$extra', '$d_id', '$id', '$created_by_date', '$status','$dob','$doa','$date1','$date2','$credit_limit','$credit_enable','$old_balance','$day_limit' )");
 	            $query->execute();
 
 	            $select_query=$db->prepare("select customer_id, customer_name,customer_contact,customer_gstn,customer_extra from customer_mst where customer_name='$name' and customer_contact='$contact' and customer_gstn='$gstn' and deviceid='$d_id'");
@@ -70,6 +79,15 @@
 						$response.='"customer_name":"'.$data['customer_name'].'",';
 						$response.='"customer_contact":"'.$data['customer_contact'].'",';
 						$response.='"customer_gstn":"'.$data['customer_gstn'].'",';
+						//new feilds
+						$response.='"dob":"'.$data['dob'].'",';
+						$response.='"doa":"'.$data['doa'].'",';
+						$response.='"date1":"'.$data['date1'].'",';
+						$response.='"date2":"'.$data['date2'].'",';
+						$response.='"credit_limit":"'.$data['credit_limit'].'",';
+						$response.='"credit_enable":"'.$data['credit_enable'].'",';
+						$response.='"old_balance":"'.$data['old_balance'].'",';
+						$response.='"day_limit":"'.$data['day_limit'].'",';
 						$response.='"customer_extra":"'.$data['customer_extra'].'"},';
 					}
 					while($data=$select_query->fetch());

@@ -31,6 +31,10 @@
     input[type=number]::-webkit-inner-spin-button {
         -webkit-appearance: none;
     }
+
+    .sack{
+        display: flex;
+    }
 </style>
 
 <body class="theme-teal">
@@ -173,12 +177,16 @@
                     <div class="card">
                         <div class="header">
                             <div class="row clearfix">
-                                <div class="col-xs-12 col-sm-6">
+                                <div class="col-xs-6">
+                                    <span class="m-r-10 font-12">Yoa are not able to add stock here</span>
+                                </div>
+                                <div class="col-xs-6">
                                     <button class="btn waves-effect" style="background: #EF5350"></button><span class="m-r-10 font-12">OUT OF STOCK</span>
                                     <button class="btn waves-effect" style="background: #90CAF9"></button><span class="m-r-10 font-12">LOW STOCK</span>
                                 </div>
-                                <div class="col-xs-3 col-xs-offset-3 align-right">
+                                <div class="col-xs-3 col-xs-offset-9 align-right sack">
                                     <input type="text" name="search" id="search" placeholder="Search">
+                                    <button id="search-btn" class="btn btn-info">Search</button>
                                 </div>
                             </div>
                         </div>     
@@ -200,7 +208,7 @@
 
         $(document).ready(function() 
         {
-            $("#search").keyup(function()
+            $("#search-btn").click(function()
             {
                 var search= $("#search").val();
                 if(search.length==0)
@@ -253,6 +261,20 @@
     $(document).ready(function()
     {
         $('#left_product').addClass('active');
+    });
+
+    $(document).ready(function()
+    {
+        $.ajax({
+            type: 'POST',
+            url: '../sql/check_last_sync.php',
+            data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+            cache: false,
+            success: function(data)
+            {
+                showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+            }
+        });
     });
        
 </script>

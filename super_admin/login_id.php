@@ -1,7 +1,7 @@
 
 <?php
     session_start();
-    include('admin_verify.php');          
+    include('super_admin_verify.php');          
 ?>
 <!DOCTYPE html>
 <html>

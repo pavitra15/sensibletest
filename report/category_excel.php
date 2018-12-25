@@ -22,7 +22,7 @@
     }
 
     $status='active';
-    $product_query=$db->prepare("select english_name, category_name, sum(total_amt) as total from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' group by product.product_id");
+    $product_query=$db->prepare("select english_name, category_name, sum(total_amt) as total from( select DISTINCT bill_no, english_name, category_name, total_amt, product.product_id  from  transaction_mst, product, transaction_dtl, category_dtl where transaction_dtl.transaction_id= transaction_mst.transaction_id and transaction_dtl.item_id=product.product_id and transaction_mst.device_id='$d_id' and product.category_id= category_dtl.category_id and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date') T1 group by product_id");
 
     $product_query->execute();
     $response='{"data":[';

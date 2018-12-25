@@ -123,7 +123,7 @@ only screen and (max-width: 760px),
                     <option>No</option>
                 </select></td>
                 <td><input type="text" class="grpprice" id="reorder_level'.$data['stock_id'].'" value="'.$data['reorder_level'].'"></td>
-                <td><input type="text" class="grpprice" id="new_stock'.$data['stock_id'].'" value="0"></td>';
+                <td><input type="text" class="grpprice" id="new_stock'.$data['stock_id'].'" value="0"> </td>';
                     }
                     elseif($data['current_stock']<$data['reorder_level'])
                     {
@@ -205,7 +205,7 @@ only screen and (max-width: 760px),
                     <option>No</option>
                 </select></td>
                 <td><input type="text" class="grpprice" id="reorder_level'.$data['stock_id'].'" value="'.$data['reorder_level'].'"></td>
-                <td><input type="text" class="grpprice" id="new_stock'.$data['stock_id'].'" value="0"></td>';
+                <td><input type="text" class="grpprice" id="new_stock'.$data['stock_id'].'" value="0" disabled></td>';
                 }
             ?>
                 <script type="text/javascript">
@@ -336,7 +336,7 @@ if(stockable.length>0 && unit.length>0)
 }
 var reorder_level=$("#reorder_level"+ID).val();
 
-var dataString = 'stock_id='+ ID +'&stockable='+stockable+'&reorder_level='+reorder_level+'&current_stock='+addition+'&unit='+unit+'&id='+<?php echo $_SESSION['login_id']; ?>;
+var dataString = 'stock_id='+ ID +'&stockable='+stockable+'&reorder_level='+reorder_level+'&current_stock='+addition+'&new_stock='+new_stock+'&unit='+unit+'&id='+<?php echo $_SESSION['login_id']; ?>+'&d_id='+<?php echo $_SESSION['d_id']; ?>;
 if(unit.length>0 && stockable.length>0 && reorder_level.length>0)
 {
 
@@ -347,6 +347,7 @@ data: dataString,
 cache: false,
 success: function(data)
 {
+    console.log(data);
     values=data.split('_');
     ch=values[0];
     name=values[1];
@@ -418,4 +419,4 @@ $(document).ready(function() {
 <script src="../plugins/sweetalert/sweetalert.min.js"></script>
 <script src="../plugins/bootstrap-notify/bootstrap-notify.js"></script>
 <script src="../js/pages/ui/notifications.js"></script>
-   
+   s

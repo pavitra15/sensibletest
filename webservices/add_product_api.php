@@ -63,6 +63,9 @@
 			$price7=$object->price7;
 			$price8=$object->price8;
 			$price9=$object->price9;
+			//added field
+			$current_stock=$object->current_stock;
+
 			$push_query=$db->prepare("select * from product where deviceid='$d_id' and status='active' and english_name='$english_name'");
 			$push_query->execute();
 	        $product_count=$push_query->rowCount();
@@ -81,7 +84,8 @@
 	                while ($data=$select_query->fetch());
 	                if($product_id)
 	                {
-	                	$stock_query=$db->prepare("insert into stock_mst(product_id,current_stock,stockable,unit_id)values($product_id,0,'$stockable',$unit_id)");
+	                																										//0 replaced with $current_stock
+	                	$stock_query=$db->prepare("insert into stock_mst(product_id,current_stock,stockable,unit_id)values($product_id,$current_stock,'$stockable',$unit_id)");
 	                	$stock_query->execute();
 
 	                	$price_query=$db->prepare("insert into price_mst(product_id,tax_id, price1, price2, price3, price4, price5, price6, price7, price8, price9) values('$product_id','$tax_id',$price1,$price2,$price3,$price4,$price5,$price6,$price7,$price8,$price9)");

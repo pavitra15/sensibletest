@@ -73,6 +73,10 @@ only screen and (max-width: 760px),
                         echo "<th>Kitchen</th>";
                         echo "<th>Comisson(%)</th>";
                     }
+                    elseif($_SESSION['device_type']=="Non-Table")
+                    {
+                        echo "<th>Kitchen</th>";
+                    }
                 ?>
                 <?php
                     if($device_model==500)
@@ -186,6 +190,23 @@ only screen and (max-width: 760px),
                             echo'</select></td>
                             <td><input type="number" id="comission_'.$data['product_id'].'" class="test-input cat search-box" value="'.$data['comission'].'"> </td>';
                         }
+                        elseif($_SESSION['device_type']=="Non-Table")
+                        {
+                            echo'<td><select class="form-control" id="kitchen'.$data['product_id'].'">
+                                <option value="'.$kitchen_val.'">'.$kitchen.'</option>';
+                                $status="active";
+                                $kit_query=$db->prepare("select * from kitchen_dtl where deviceid='$d_id' and status='$status'");
+                                $kit_query->execute();
+                                if($kit=$kit_query->fetch())
+                                {
+                                    do
+                                    {
+                                        echo'<option value="'.$kit['kitchen_id'].'">'.$kit['kitchen_name'].'</option>';
+                                    }
+                                    while($kit=$kit_query->fetch());
+                                }
+                            echo'</select></td>';
+                        }
                         if($device_model==500)
                         {
                             echo'<td><img id="blah_'.$data['product_id'].'" src="'.$img_url.'" height="30px"/> <input type="text" id="img_'.$data['product_id'].'" value="'.$data['bucket_id'].'" style="display:none;"></td>';
@@ -243,6 +264,24 @@ only screen and (max-width: 760px),
                   
                 echo '</select></td>
                  <td><input type="number" class="test-input cat search-box comission"> </td>';
+                   }
+                   elseif($_SESSION['device_type']=="Non-Table")
+                    {
+                        echo'<td><select class="form-control kitchen">
+                            <option value="">Select</option>';
+                            $status="active";
+                            $kit_query=$db->prepare("select * from kitchen_dtl where deviceid='$d_id' and status='$status'");
+                            $kit_query->execute();
+                            if($kit=$kit_query->fetch())
+                            {
+                                do
+                                {
+                                    echo'<option value="'.$kit['kitchen_id'].'">'.$kit['kitchen_name'].'</option>';
+                                }
+                                while($kit=$kit_query->fetch());
+                            }
+                  
+                echo '</select></td>';
                    }
                 ?>
                 <?php

@@ -1,5 +1,5 @@
 <?php 
-    $adjacents = "2"; 
+    $adjacents = "3"; 
     $lpm1=$total_pages-1;
     if(!empty($total_pages))
     {

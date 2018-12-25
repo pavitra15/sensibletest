@@ -26,6 +26,11 @@
 	    } 
         while ($access_data = $access_query->fetch());
     }
+
+    $sync_api='sendbill_report';
+    $last_sync_query=$db->prepare("insert into last_sync(d_id,sync_datetime,sync_api)values('$d_id','$last_login','$sync_api')");
+    $last_sync_query->execute();
+    
 	function json_validator($data=NULL) 
 	{
     	if (!empty($data)) 
@@ -74,6 +79,8 @@
 						$bill_type_id=$bill_data[$i]->bill_type_id;
 						$bill_items=$bill_data[$i]->bill_items;
 
+						// $response.='{"bill_no":"'.$bill_no.'","status":1},';
+
 						$query=$db->prepare("update transaction_mst set parcel_amt='$parcel_amt', tax_amt= '$tax_amt', bill_amt='$bill_amt', cash='$cash', credit='$credit', digital='$digital', customer_id='$customer_id', waiter_id='$waiter_id', bill_type_id='$bill_type_id', updated_by='$user_id', updated_date='$date',updated_sync_by='$sync_by', updated_sync_date='$created_sync_date' where device_id='$d_id' and bill_no='$bill_no'");
 						if($query->execute())
 						{
@@ -106,7 +113,7 @@
 										$st->execute();
 										$rs=$st->rowCount();
 										$stockable="Yes";
-										$update_stock=$db->prepare("update stock_mst set current_stock= current_stock+'$quantity' where product_id='$item_id' and stockable='$stockable'");
+										$update_stock=$db->prepare("update stock_mst set current_stock= (current_stock+$quantity) where product_id='$item_id' and stockable='$stockable'");
 										$update_stock->execute();
 									}
 									else
@@ -145,6 +152,8 @@
 						$discount=$bill_data[$i]->discount;
 						$bill_type_id=$bill_data[$i]->bill_type_id;
 						$bill_items=$bill_data[$i]->bill_items;
+
+						// $response.='{"bill_no":"'.$bill_no.'","status":1},';
 
 						$exist_bl_query=$db->prepare("select bill_no from transaction_mst where device_id='$d_id' and bill_no='$bill_no'");
 						$exist_bl_query->execute();
@@ -212,7 +221,7 @@
 											if($sm->execute())
 											{
 												$stockable="Yes";
-												$update_stock=$db->prepare("update stock_mst set current_stock= current_stock-'$quantity' where product_id='$item_id' and stockable='$stockable'");
+												$update_stock=$db->prepare("update stock_mst set current_stock= (current_stock-$quantity) where product_id='$item_id' and stockable='$stockable'");
 												$update_stock->execute();
 											}
 											else
@@ -283,6 +292,7 @@
 						$discount=$bill_data[$i]->discount;
 						$bill_type_id=$bill_data[$i]->bill_type_id;
 						$bill_items=$bill_data[$i]->bill_items;
+						// $response.='{"bill_no":"'.$bill_no.'","status":1},';
 						$exist_bl_query=$db->prepare("select bill_no from transaction_mst where device_id='$d_id' and bill_no='$bill_no'");
 						$exist_bl_query->execute();
 						if($exist_data=$exist_bl_query->fetch())
@@ -331,11 +341,11 @@
 										$sm=$db->prepare("insert into transaction_dtl (transaction_id,item_id,quantity,price,tax_index,total_amt,status) values('$transaction_id','$item_id','$quantity','$price','$tax_index','$total','$status')");
 										$sm->execute();
 										$rs=$sm->rowCount();
-										if($rs>0)
+										if(1)
 										{
 											$rk=1;
 											$stockable="Yes";
-											$update_stock=$db->prepare("update stock_mst set current_stock= current_stock-'$quantity' where product_id='$item_id' and stockable='$stockable'");
+											$update_stock=$db->prepare("update stock_mst set current_stock= (current_stock-$quantity) where product_id='$item_id' and stockable='$stockable'");
 											$update_stock->execute();
 											
 										}
@@ -406,8 +416,11 @@
 	}
 	else
 	{
-
 		$responce = array('status' =>0,'message'=>'Json format is wrong','access'=>$access_control);
 		echo json_encode($responce);
 	}
+
+	$query_data=$db->prepare("UPDATE transaction_dtl INNER JOIN product ON transaction_dtl.item_id = product.product_id SET transaction_dtl.item_name = product.english_name WHERE transaction_dtl.item_id = product.product_id and transaction_dtl.item_name is null");
+	$query_data->execute();
+
 ?>

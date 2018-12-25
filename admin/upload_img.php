@@ -17,7 +17,7 @@
                 $id=$_SESSION['login_id'];
                 $product_id=$_POST['id'];
                 $name=$product_id.".".$information['extension'];
-                $target_dir = "gs://nth-weft-193604.appspot.com/image_lib/";
+                $target_dir = "gs://grounded-access-212210.appspot.com/image_lib/";
                 $bucket = "https://storage.googleapis.com/nth-weft-193604.appspot.com/image_lib/".$name;
                 $target_file = $target_dir.$name;
                 $uploadOk = 1;

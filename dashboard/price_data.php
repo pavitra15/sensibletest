@@ -65,8 +65,8 @@ only screen and (max-width: 760px),
                                                 {
                                                     do
                                                     {
-                                                        echo'<th>'.$data['premise_name'].' Price</th>';
                                                         $k++;
+                                                        echo'<th>'.$data['premise_name'].' Price <i class="material-icons copy" id="'.$k.'">file_copy</i></th>';
                                                     }
                                                     while($data=$sk->fetch());
                                                 }
@@ -84,7 +84,7 @@ only screen and (max-width: 760px),
                                                     do
                                                     {
                                                         $k++;
-                                                        echo'<th>'.$data['customer_name'].' Price</th>';
+                                                        echo'<th>'.$data['customer_name'].' Price <i class="material-icons copy" id="'.$k.'">file_copy</i></th>';
                                                     }
                                                     while($data=$sk->fetch());
                                                 }
@@ -216,6 +216,27 @@ only screen and (max-width: 760px),
         });
 
         $(document).ready(function() {         
+            $('.copy').click(function(){
+                var id=$(this).attr('id');
+                var d_id=<?php echo $_SESSION['d_id']; ?>;
+                $('.page-loader-wrapper').show();
+                   $.ajax({
+                        type: 'POST',
+                        url: '../sql/copy_price.php',
+                        data: { "id":id,"d_id":d_id},
+                        cache: false,
+                        success: function(data)
+                        {
+                            console.log(data);
+                            $('.page-loader-wrapper').hide();
+                            setTimeout("location.reload(true);",1000);
+                        }
+                    });
+                
+            } );
+        });
+
+        $(document).ready(function() {         
             $('.next').click(function(){
                 var page= <?php echo $page+1;?>;
                 $('#data-display').show();
@@ -257,7 +278,7 @@ only screen and (max-width: 760px),
                 $("#realtime").show();
                 }).change(function()
                 {
-                var ID=$(this).attr('id');
+                    var ID=$(this).attr('id');
                     var price1=$("#price1"+ID).val();
                     var price2=$("#price2"+ID).val();
                     var price3=$("#price3"+ID).val();
@@ -298,6 +319,8 @@ only screen and (max-width: 760px),
                         $("#prices8"+ID).val((parseFloat(price8)*tax_calc).toFixed(2));
                         $("#prices9"+ID).val((parseFloat(price9)*tax_calc).toFixed(2));
                     }
+
+                    
                 });
             });
 

@@ -128,10 +128,10 @@
 			<input type="checkbox" id="product" class="filled-in" checked />
             <label for="product">Product</label>
         </div>
-        <div class="demo-checkbox" style="padding-left: 30px">
+        <!-- <div class="demo-checkbox" style="padding-left: 30px">
 			<input type="checkbox" id="pro_all" class="filled-in" value=""/>
 			<label for="pro_all">Select All </label>
-		</div>
+		</div> -->
 <table class="table table-bordered table-striped table-hover dataTable js-exportable" cellspacing="0" width="100%" id="example">
 <thead>
             <tr>

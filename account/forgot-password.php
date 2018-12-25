@@ -83,7 +83,8 @@
             if((email.length==10))
             {
 
-            $.ajax({
+            $.ajax(
+            {
                 type: 'POST',
                 data:{email:email},
                 url: 'username_verify.php',
@@ -121,6 +122,8 @@
 
     <!-- Validation Plugin Js -->
     <script src="../plugins/jquery-validation/jquery.validate.js"></script>
+    <script src="../plugins/bootstrap-notify/bootstrap-notify.js"></script>
+    <script src="../js/pages/ui/notifications.js"></script>
 
     <!-- Custom Js -->
     <script src="../js/admin.js"></script>

@@ -29,6 +29,11 @@
         <link href="../css/custom.css" rel="stylesheet">
         <link href="../css/themes/all-themes.css" rel="stylesheet" />
         <body class="theme-teal">
+            <style type="text/css">
+                .sack{
+        display: flex;
+    }
+            </style>
             <div class="page-loader-wrapper">
                 <div class="loader">
                     <div class="preloader">
@@ -160,8 +165,9 @@
                                     <div class="col-xs-12 col-sm-6">
                                         <button type="button" name="save" id="save" class="btn btn-info save">Save</button>
                                     </div>
-                                    <div class="col-xs-3 col-xs-offset-3 align-right">
+                                    <div class="col-xs-3 col-xs-offset-3 align-right sack">
                                         <input type="text" name="search" id="search" placeholder="Search">
+                                        <button id="search-btn" class="btn btn-info">Search</button>
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +202,7 @@
 
         $(document).ready(function() 
         {
-            $("#search").keyup(function()
+            $("#search-btn").click(function()
             {
                 var search= $("#search").val();
                 var device_model= <?php echo $device_model; ?>;
@@ -447,6 +453,20 @@ $('#save').click(function(){
     $(document).ready(function()
     {
         $('#left_product').addClass('active');
+    });
+
+    $(document).ready(function()
+    {
+        $.ajax({
+            type: 'POST',
+            url: '../sql/check_last_sync.php',
+            data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+            cache: false,
+            success: function(data)
+            {
+                showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+            }
+        });
     });
  
 </script>

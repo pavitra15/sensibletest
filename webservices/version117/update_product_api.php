@@ -126,6 +126,11 @@
 
 						$stock_query=$db->prepare("update stock_mst set stockable='$stockable', unit_id='$unit_id', current_stock=current_stock+'$stock_added', reorder_level='$reorder_level' where product_id='$product_id'");
 						$stock_query->execute();
+
+						$stock_from="api";
+						$query=$db->prepare("insert into stock_dtl(d_id, log_date, stock_from, product_id,stock_added) values('$d_id', '$last_login', '$stock_from', '$product_id','$stock_added')");
+			        	$query->execute();
+
 						if($device_type=="Weighing")
 						{
 							$customer_query=$db->prepare("select * from customer_dtl where deviceid='$d_id' and status='$status'");
@@ -581,7 +586,7 @@
 	   	{
 	   		$responce = array('status' =>1,'message'=>"Invalid json");
 			echo json_encode($responce);
-			echo $response;	    	
+			// echo $response;	    	
 		}
 	}
 	else

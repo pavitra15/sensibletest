@@ -27,6 +27,9 @@
 	    } 
         while ($access_data = $access_query->fetch());
     }
+    $sync_api='sendbill_report';
+    $last_sync_query=$db->prepare("insert into last_sync(d_id,sync_datetime,sync_api)values('$d_id','$last_login','$sync_api')");
+    $last_sync_query->execute();
 	function json_validator($data=NULL) 
 	{
     	if (!empty($data)) 

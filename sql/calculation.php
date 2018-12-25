@@ -22,6 +22,7 @@
 			{
 				do
 				{
+
 					$product_id=$product_data['product_id'];
 					$tax_perc=$product_data['tax_perc'];
 					$tax_calc=(1+($tax_perc/100));	
@@ -33,7 +34,6 @@
 		}
 		else
 		{
-
 			$product_query=$db->prepare("select product.product_id, price_mst.tax_id, tax_perc from product, price_mst,tax_mst where price_mst.tax_id=tax_mst.tax_id and product.status='active' and product.deviceid='$d_id'  and product.product_id=price_mst.product_id LIMIT $start_from, $limit");
 			$product_query->execute();
 			if($product_data=$product_query->fetch())

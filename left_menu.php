@@ -28,6 +28,9 @@
                 {
                     echo'<li>
                         <a href="../dashboard/customer">Customer Type Setting</a>
+                    </li>
+                    <li>
+                        <a href="../dashboard/kitchen">Kitchen Setting</a>
                     </li>';
                 }
                 echo'<li>
@@ -70,6 +73,9 @@
                             <span>Report</span>
                     </a>
                     <ul class="ml-menu">
+                    	<li>
+                            <a href="../report/tally_integrate">Tally Integration</a>
+                        </li>
                         <li>
                             <a href="../report/stock_report">Stock Report</a>
                         </li>
@@ -107,14 +113,20 @@
                         <li>
                             <a href="../report/waiter_report">'.$_SESSION['person_config'].' Report</a>
                         </li>
+                        <li>
+                            <a href="../report/stock_dtl_report">Stock Added Report</a>
+                        </li>
+                        <li>
+                            <a href="../report/bill_search">Search Bill</a>
+                        </li>
                    </ul>
                 </li>';
         }
-        // echo'<li id="left_register">
-        //             <a href="../dashboard/register_device">
-        //                 <i class="material-icons">note_add</i>
-        //                 <span>Register Device</span>
-        //             </a>
-        //         </li>
-            echo'</ul>';
+        echo'<li id="left_register">
+            <a href="../cumulative/configuration">
+                <i class="material-icons">note_add</i>
+                <span>Review Settings</span>
+            </a>
+        </li>
+    </ul>';
     ?>

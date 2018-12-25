@@ -206,8 +206,23 @@
         {
             $('#left_report').addClass('active');
         });
-    </script>
 
+        $(document).ready(function()
+        {
+            $.ajax({
+                type: 'POST',
+                url: '../sql/check_last_sync.php',
+                data: { "d_id":<?php echo $_SESSION['d_id']; ?>},
+                cache: false,
+                success: function(data)
+                {
+                    showNotification("alert-info", "Last sync : "+data, "top", "right",'', '');
+                }
+            });
+        });
+    </script>
+    <script src="../plugins/bootstrap-notify/bootstrap-notify.js"></script>
+    <script src="../js/pages/ui/notifications.js"></script>
     <script src="../plugins/momentjs/moment.js"></script>
     <script src="../js/change_device.js"></script>
     <script src="../js/avatar.js"></script>

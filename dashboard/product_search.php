@@ -179,149 +179,11 @@ only screen and (max-width: 760px),
                     </tr>';
                 }
             ?>
-            <tr class="insert" id="1">
-                <td><input type="text" class="english_name test-input cat search-box" id="english_1" value="" maxlength="50"> </td>
-                <td><input type="text" class="regional_name test-input cat" id="regional_1"  value="" maxlength="50"> </td>
-                <?php
-                    if($_SESSION['device_type']=="Weighing")
-                    {
-                        echo '<td><select class="form-control weighing">
-                            <option>Yes</option>
-                            <option>No</option>
-                        </select></td>';
-                    }
-                ?>
-                <td><select class="form-control category">
-                    <option>Select</option>
-                    <?php
-                        $status="active";
-                        $cat_query=$db->prepare("select * from category_dtl where deviceid='$d_id' and status='$status'");
-                        $cat_query->execute();
-                        if($cat=$cat_query->fetch())
-                        {
-                            do
-                            {
-                                echo'<option value="'.$cat['category_id'].'">'.$cat['category_name'].'</option>';
-                            }
-                            while($cat=$cat_query->fetch());
-                        }
-                    ?>
-                </select></td>
-
-                <?php
-                    if($_SESSION['device_type']=="Table")
-                    {
-                        echo'<td><select class="form-control kitchen">
-                            <option value="">Select</option>';
-                            $status="active";
-                            $kit_query=$db->prepare("select * from kitchen_dtl where deviceid='$d_id' and status='$status'");
-                            $kit_query->execute();
-                            if($kit=$kit_query->fetch())
-                            {
-                                do
-                                {
-                                    echo'<option value="'.$kit['kitchen_id'].'">'.$kit['kitchen_name'].'</option>';
-                                }
-                                while($kit=$kit_query->fetch());
-                            }
-                  
-                echo '</select></td>
-                 <td><input type="number" class="test-input cat search-box comission"> </td>';
-                   }
-                ?>
-                <?php
-                    if($device_model==500)
-                    {
-                        echo'<td><img id="blah_1" src="#" height="30px"/><input type="text" class="img" id="img_1" value="" style="display: none;"></td>';
-                    }
-                ?>
-                <th style="max-width:15px"><button type="button" class="btn bg-red btn-xs removebutton" title="Remove this row"><i class="material-icons">delete</i></button></th>
-            </tr>
         </tbody>
-    </table>
-    <div class="row" style="text-align: right;">
-        <button type="button" id="add" class="btn bg-cyan btn-circle waves-effect waves-circle waves-float"> 
-            <i class="material-icons">add</i> 
-        </button>
-    </div>
-    
+    </table>    
     <script type="text/javascript">
 
-        $('#add').click(function()
-         {
-            $("tbody > tr:last").clone().appendTo("table").find("input[type='text']").val("");
-            event.preventDefault();
-        });
-
-        
-        $(document).ready(function() 
-        {         
-            $('.gen').click(function()
-            {
-                var page=$(this).text();
-                var device_model= <?php echo $device_model; ?>;
-                $('#data-display').show();
-                $('.page-loader-wrapper').show();
-                $.ajax({
-                    type: 'POST',
-                    url: '../dashboard/product_data.php',
-                    data: { "page":page,"device_model":device_model },
-                    cache: false,
-                    success: function(data)
-                    {
-                        $('.page-loader-wrapper').hide();
-                        $('#data-display').html(data);
-                    }
-                });    
-            });
-        });
-
-        $(document).ready(function()
-        {         
-            $('.prev').click(function()
-            {
-                var page= <?php echo $page-1;?>;
-                var device_model= <?php echo $device_model; ?>;
-                $('#data-display').show();
-                $('.page-loader-wrapper').show();
-                $.ajax({
-                    type: 'POST',
-                    url: '../dashboard/product_data.php',
-                    data: { "page":page,"device_model":device_model },
-                    cache: false,
-                    success: function(data)
-                    {
-                        $('.page-loader-wrapper').hide();
-                        $('#data-display').html(data);
-                    }
-                });    
-            } );
-        });
-
-        $(document).ready(function() 
-        {         
-            $('.next').click(function(){
-                var page= <?php echo $page+1;?>;
-                var device_model= <?php echo $device_model; ?>;
-                $('#data-display').show();
-                $('.page-loader-wrapper').show();
-                $.ajax(
-                {
-                    type: 'POST',
-                    url: '../dashboard/product_data.php',
-                    data: { "page":page,"device_model":device_model },
-                    cache: false,
-                    success: function(data)
-                    {
-                        $('.page-loader-wrapper').hide();
-                        $('#data-display').html(data);
-                    }
-                });
-            });
-        });
-
-
- $(document).ready(function()
+         $(document).ready(function()
 {
     $(".edit_tr").click(function()
     {
@@ -342,6 +204,7 @@ only screen and (max-width: 760px),
                 var regional=$("#regional_"+ID).val();
                 var weightable=$("#weightable"+ID).val();
                 var comission=$("#comission_"+ID).val();
+                var discount=$("#discount_"+ID).val();
                 if(weightable=== undefined)
                 {
                     weightable="No";
@@ -358,13 +221,18 @@ only screen and (max-width: 760px),
                     comission=0;
                 }
 
+                if(discount=== undefined)
+                {
+                    discount=0;
+                }
+
                 if(comission>100)
                 {
                     comission=0;
                 }
 
                 var category=$("#category"+ID).val();
-                var dataString = 'product_id='+ ID +'&english='+english+'&regional='+regional+'&weightable='+weightable+'&category='+category+'&kitchen='+kitchen+'&comission='+comission+'&id='+<?php echo $_SESSION['login_id']; ?>+'&d_id='+<?php echo $_SESSION['d_id']; ?>;
+                var dataString = 'product_id='+ ID +'&english='+english+'&regional='+regional+'&weightable='+weightable+'&category='+category+'&discount='+discount+'&kitchen='+kitchen+'&comission='+comission+'&id='+<?php echo $_SESSION['login_id']; ?>+'&d_id='+<?php echo $_SESSION['d_id']; ?>;
                 if(english.length>0)
                 {
 

@@ -64,7 +64,7 @@
             $response='{"status":2,"record":[';
             for($m=0; $m<$length; $m++)
             {
-				$english_name=ucwords($records[$m]->english_name);
+				$english_name=strtoupper($records[$m]->english_name);
 				$regional_name=$records[$m]->regional_name;
 				if(array_key_exists('barcode', $records[$m]))
 				{

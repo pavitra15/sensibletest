@@ -33,6 +33,7 @@
 		else
 		{
 			$query=$db->prepare("update price_mst set tax_id='$tax_id', price1='$price1', prices1='$prices1', price2='$price2', prices2='$prices2', price3='$price3', prices3='$prices3', price4='$price4', prices4='$prices4', price5='$price5',  prices5='$prices5', price6='$price6', prices6='$prices6', prices7='$prices7', price8='$price8', prices8='$prices8', price9='$price9', prices9='$prices9', updated_by_id='$id', updated_by_date='$date' where price_id='$price_id'");
+
 			$query->execute();
 			echo "1_";
 		}

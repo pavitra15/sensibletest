@@ -15,7 +15,25 @@ session_start();
     $d_id=$_SESSION['d_id'];
 
     $status='active';
-    $product_query=$db->prepare("select sum(bill_amt) as total, sum(tax_amt) as total_tax, sum(cash) as total_cash, sum(credit) as total_credit, sum(digital) as total_digital from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+
+    $excl_product_query=$db->prepare("select sum(bill_amt) as total, sum(tax_amt) as total_tax, sum(parcel_amt) as total_parcel_amt, sum(cash) as total_cash, sum(credit) as total_credit, sum(digital) as total_digital, sum(discount) as total_discount from( select distinct bill_no, bill_amt, tax_amt, parcel_amt, cash, credit, digital, discount from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and tax_state=0 and bill_date between '$start_date' and '$end_date')T1");
+    $excl_product_query->execute();
+    if($excl_data=$excl_product_query->fetch())
+    {
+        $excl_final_data=$excl_data['total']+$excl_data['total_parcel_amt']+$excl_data['total_tax']-$excl_data['total_discount'];
+    }
+
+    $incl_product_query=$db->prepare("select sum(bill_amt) as total, sum(tax_amt) as total_tax, sum(cash) as total_cash, sum(credit) as total_credit,sum(parcel_amt) as total_parcel_amt, sum(digital) as total_digital, sum(discount) as total_discount from( select distinct bill_no, bill_amt, tax_amt, parcel_amt, cash, credit, digital, discount from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and tax_state!=0 and bill_date between '$start_date' and '$end_date')T1");
+    $incl_product_query->execute();
+    if($incl_data=$incl_product_query->fetch())
+    {
+        $incl_final_data=$incl_data['total']+$incl_data['total_parcel_amt']-$incl_data['total_discount'];
+    }
+
+    $final_data=$excl_final_data+$incl_final_data;
+
+
+    $product_query=$db->prepare("select sum(bill_amt) as total, sum(tax_amt) as total_tax, sum(cash) as total_cash,sum(parcel_amt) as total_parcel_amt, sum(credit) as total_credit, sum(digital) as total_digital, sum(discount) as total_discount, sum(round_off) as total_round_off from( select distinct bill_no, bill_amt, tax_amt, parcel_amt, cash, credit, digital, discount, round_off from  transaction_mst where transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date')T1");
     $product_query->execute();
     if($data=$product_query->fetch())
     {
@@ -60,21 +78,45 @@ session_start();
                 </div>
                 <div class="col-sm-4">';
                     echo $data['total_credit'];
-                echo'</div></div> 
+                echo'</div></div>
                 <div class="row">
                     <div class="col-sm-2">
-                        <strong>Total Amount : </strong>
+                        <strong>Total Discount : </strong>
                     </div>
                 <div class="col-sm-4">';
-                    echo $data['total']+$data['total_tax'];
+                    echo $data['total_discount'];
                 echo'</div>
                 <div class="col-sm-2">
                    <strong>Total Digital Payment : </strong> 
                 </div>
                 <div class="col-sm-4">';
                     echo $data['total_digital'];
-                    echo'</div>     
-            </div>';
+                    echo'</div></div>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <strong>Round Off : </strong>
+                    </div>
+                <div class="col-sm-4">';
+                    echo $data['total_round_off'];
+                echo'</div>
+                <div class="col-sm-2">
+                 <strong>Final Amount :</strong>
+                </div>
+                <div class="col-sm-4">';
+                echo $final_data+$data['total_round_off'];
+                    echo'</div></div>
+                    <div class="row">
+                    <div class="col-sm-2">
+                        <strong>Parcel Charge : </strong>
+                    </div>
+                <div class="col-sm-4">';
+                    echo $data['total_parcel_amt'];
+                echo'</div>
+                <div class="col-sm-2">
+                 <strong></strong>
+                </div>
+                <div class="col-sm-4">';
+                    echo'</div></div>';
             }
             while($data=$product_query->fetch());
         }

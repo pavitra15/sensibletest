@@ -12,7 +12,7 @@
         $id=$_SESSION['login_id'];
         $version=$_POST['version'];
         $name="POSiBILL".".apk";
-        $target_dir = "gs://nth-weft-193604.appspot.com/apk_store/";
+        $target_dir = "gs://solar-botany-215917.appspot.com/apk_store/";
         $target_file = $target_dir.$name;
         $uploadOk = 1;
         $st=$db->prepare("select paths,version from apk where apk_id=1");

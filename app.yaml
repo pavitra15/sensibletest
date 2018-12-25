@@ -97,6 +97,10 @@ handlers:
   script: /report/bill_report.php
   secure: always
 
+- url: /report/stock_dtl_report
+  script: /report/stock_dtl_report.php
+  secure: always
+
 - url: /report/kot_report
   script: /report/kot_report.php
   secure: always
@@ -135,6 +139,14 @@ handlers:
 
 - url: /report/reorder_stock__report
   script: /report/reorder_stock__report.php
+  secure: always
+
+- url: /report/bill_search
+  script: /report/bill_search.php
+  secure: always
+
+- url: /report/tally_integrate
+  script: /report/tally_integrate.php
   secure: always
 
 - url: /operation/device_info
@@ -294,60 +306,46 @@ handlers:
   script: /change_request/change_request.php
   secure: always
 
-- url: /super_admin/allow_access
-  script: /super_admin/allow_access.php
+- url: /admin/device_report
+  script: /admin/device_report.php
   secure: always
 
-- url: /super_admin/deny_access
-  script: /super_admin/deny_access.php
+
+- url: /custom_report/delete
+  script: /custom_report/delete_device.php 
   secure: always
 
-- url: /super_admin/user_device
-  script: /super_admin/user_device.php
+- url: /admin/ext_upload
+  script: /admin/ext_upload.php
   secure: always
 
-- url: /super_admin/upload
-  script: /super_admin/upload.php
-  secure: always
-
-- url: /super_admin/user_type_master
-  script: /super_admin/user_type_master.php 
-  secure: always
-
-- url: /super_admin/make_demo
-  script: /super_admin/make_demo.php
-  secure: always
-
-- url: /super_admin/state_master
-  script: /super_admin/state_master.php
-  secure: always
-
-- url: /super_admin/language_master
-  script: /super_admin/language_master.php
-  secure: always
-
-- url: /super_admin/logout
-  script: /super_admin/logout.php
+- url: /admin/things_upload
+  script: /admin/things_upload.php
   secure: always
 
 - url: /validation/validate_products
   script: /validation/validate_products.php   
   secure: always
 
-- url: /dealer/login
-  script: /dealer/login.php
+- url: /custom_report/dashboard
+  script: /custom_report/index.php
   secure: always
 
-- url: /dealer/logout
-  script: /dealer/logout.php       
+- url: /custom_report/invalid
+  script: /custom_report/invalid.php
   secure: always
+
+- url: /custom_report/product
+  script: /custom_report/product.php
+  secure: always
+
+- url: /custom_report/report
+  script: /custom_report/bill_report.php
+  secure: always
+
 
 - url: /demo/demo_machine
   script: /demo/demo_machine.php 
-  secure: always
-
-- url: /dealer/dashboard
-  script: /dealer/dashboard.php
   secure: always
 
 - url: /cumulative/index
@@ -407,6 +405,6 @@ handlers:
   secure: always
   
 env_variables:
-  MYSQL_DSN: mysql:unix_socket=/cloudsql/nth-weft-193604:asia-east1:sensiblepos;dbname=posibill
+  MYSQL_DSN: mysql:unix_socket=/cloudsql/solar-botany-215917:asia-east1:posibilll;dbname=posibill
   MYSQL_USER: root
   MYSQL_PASSWORD: 'Sachin@18'

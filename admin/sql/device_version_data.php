@@ -79,7 +79,7 @@ only screen and (max-width: 760px),
                 $total_query->execute();
                 $total_records=$total_query->rowCount();    
                 $total_pages = ceil($total_records / $limit);
-                $query=$db->prepare("select d_id, deviceid, device_name, serial_no, version_name, first_name,last_name from device,user_mst, version_mst where version_mst.version_id=apk_version and device.status='$status' and user_mst.id= device.id  order by apk_version DESC LIMIT $start_from, $limit");
+                $query=$db->prepare("select d_id, deviceid, device_name, serial_no, apk_version, first_name,last_name from device,user_mst where device.status='$status' and user_mst.id= device.id  order by apk_version DESC LIMIT $start_from, $limit");
                 $query->execute();
                 while($data=$query->fetch())
                 {
@@ -87,7 +87,7 @@ only screen and (max-width: 760px),
                         <td>'.$data['first_name'].' '.$data['last_name'].'</td>
                         <td>'.$data['serial_no'].'</td>
                         <td>'.$data['device_name'].'</td>
-                        <td>'.$data['version_name'].'</td>
+                        <td>'.$data['apk_version'].'</td>
                     </tr>';
                 }
             ?>

@@ -12,7 +12,7 @@
         $id=$_SESSION['login_id'];
         $status="active";
         $date=date('Y-m-d');
-        if($new_password==$confirm_password)
+        if($new_pass==$confirm_password)
         {
             $key='123acd1245120954';
             $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);

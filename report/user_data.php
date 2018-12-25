@@ -22,7 +22,8 @@
     $d_id=$_SESSION['d_id'];
 
     $status='active';
-    $product_query=$db->prepare("select transaction_id, bill_no, bill_amt, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+    $product_query=$db->prepare("select DISTINCT bill_no, transaction_id,  tax_state, bill_amt, tax_amt, parcel_amt, if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount,parcel_amt+bill_amt-discount) as net, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'");
+
     $product_query->execute();
     $total_records=$product_query->rowCount();  
 
@@ -40,7 +41,7 @@
 
     $start_from = ($page-1) * $limit;
 
-    $Product_query=$db->prepare("select bill_no, bill_amt, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' LIMIT $start_from, $limit");  
+    $Product_query=$db->prepare("select DISTINCT bill_no, tax_state, bill_amt, tax_amt, parcel_amt, discount, if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount,parcel_amt+bill_amt-discount) as net, bill_date, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' LIMIT $start_from, $limit");  
     $Product_query->execute();
     ?>
     <!DOCTYPE html>
@@ -77,6 +78,10 @@
                         <th>User Name</th> 
                         <th>Bill No</th>
                         <th>Amount</th>
+                        <th>Tax Amt.</th>
+                        <th>Parcel Amt.</th>
+                        <th>Discount</th>
+                        <th>Net</th>
                         <th>Bill Date</th> 
                     </tr>  
                 </thead>  
@@ -86,7 +91,11 @@
                         echo'<tr>
                             <td>'.$row['user_name'].'</td>  
                             <td>'.$row['bill_no'].'</td>
-                            <td>'.$row["bill_amt"].'</td>  
+                            <td>'.$row["bill_amt"].'</td>
+                            <td>'.$row["tax_amt"].'</td>
+                            <td>'.$row["parcel_amt"].'</td>
+                            <td>'.$row["discount"].'</td>
+                            <td>'.$row["net"].'</td>  
                             <td>'.$row["bill_date"].'</td></tr>'; 
                     }             
                 echo'</tbody> 

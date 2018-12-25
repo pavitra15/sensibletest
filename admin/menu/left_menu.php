@@ -63,6 +63,9 @@
                 <li>
                     <a href="../admin/device_version">Device Version</a>
                 </li>
+                <li>
+                    <a href="../admin/device_report">Report</a>
+                </li>
             </ul>
         </li>
         <li id="left_dealer">
@@ -80,6 +83,18 @@
             <a href="../admin/upload">
                 <i class="material-icons">cloud_upload</i>
                 <span>Upload</span>
+            </a>
+        </li>
+        <li id="left_upload">
+            <a href="../admin/things_upload">
+                <i class="material-icons">cloud_upload</i>
+                <span>Things Upload</span>
+            </a>
+        </li>
+        <li id="left_upload">
+            <a href="../admin/ext_upload">
+                <i class="material-icons">cloud_upload</i>
+                <span>External Upload</span>
             </a>
         </li>
         <li id="left_approve">

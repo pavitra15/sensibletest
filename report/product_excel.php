@@ -15,12 +15,12 @@
     $select_query->execute();
     while ($device_data=$select_query->fetch()) 
     {
-    	$device_name=$device_data['device_name'];
-    	$serial_no=$device_data['serial_no'];
+        $device_name=$device_data['device_name'];
+        $serial_no=$device_data['serial_no'];
     }
 
 $status='active';
-    $count_query=$db->prepare("select english_name,regional_name, sum(transaction_dtl.quantity) AS total, sum(transaction_dtl.total_amt) as total_amt from product, transaction_dtl,transaction_mst where transaction_dtl.transaction_id=transaction_mst.transaction_id and product.product_id=transaction_dtl.item_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'  and transaction_dtl.status='active' group by (product.product_id)");
+    $count_query=$db->prepare("select english_name,regional_name, sum(quantity) AS total, sum(total_amt) as total_amt from( select DISTINCT bill_no, product.product_id, english_name, regional_name, transaction_dtl.quantity, transaction_dtl.total_amt from product, transaction_dtl,transaction_mst where transaction_dtl.transaction_id=transaction_mst.transaction_id and product.product_id=transaction_dtl.item_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date'  and transaction_dtl.status='active') T1 group by (product_id)");
     $count_query->execute();
     $response='{"data":[';
     while($data=$count_query->fetch())
@@ -38,7 +38,9 @@ $status='active';
     <script>
         
         var myMessage='<?php echo $response; ?>';
+        console.log(myMessage);
         var jsonData = JSON.parse(myMessage);
+        console.log(jsonData);
 
         function go(){
 

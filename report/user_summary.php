@@ -15,7 +15,7 @@ session_start();
     $d_id=$_SESSION['d_id'];
 
     $status='active';
-    $product_query=$db->prepare("select sum(bill_amt) as total, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date' group by user_name");
+    $product_query=$db->prepare("select sum(if(tax_state=0,parcel_amt+tax_amt+bill_amt-discount,parcel_amt+bill_amt-discount)) as total, user_name  from( select DISTINCT bill_no, tax_amt, tax_state, parcel_amt, bill_amt, discount, user_name from  transaction_mst, user_dtl where transaction_mst.user_id=user_dtl.user_id and transaction_mst.device_id='$d_id' and transaction_mst.status='$status' and bill_date between '$start_date' and '$end_date') T1 group by user_name");
     $product_query->execute();
     if($data=$product_query->fetch())
     {
